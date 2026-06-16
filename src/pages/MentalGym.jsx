@@ -16,6 +16,7 @@ export default function MentalGym() {
   const { data: modules = [], isLoading } = useQuery({
     queryKey: ["gymModules"],
     queryFn: () => base44.entities.GymModule.list("order", 100),
+    staleTime: 0,
   });
 
   const { data: progress = [] } = useQuery({
