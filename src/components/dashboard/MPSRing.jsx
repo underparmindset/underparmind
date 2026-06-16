@@ -20,7 +20,7 @@ export default function MPSRing({ score }) {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-3xl font-display font-bold">{score}</span>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">MPS</span>
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Mental Performance Score</span>
         </div>
       </div>
     </div>
