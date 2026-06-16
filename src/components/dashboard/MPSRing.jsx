@@ -23,7 +23,7 @@ export default function MPSRing({ score }) {
             <span className="text-3xl font-display font-bold">{score}</span>
             <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold leading-none">MPS</span>
           </div>
-          
+          <span className="text-[9px] text-muted-foreground text-center leading-tight mt-0.5">Mental<br/>Performance<br/>Score</span>
         </div>
       </div>
     </div>);
