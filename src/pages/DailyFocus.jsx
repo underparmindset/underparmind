@@ -109,9 +109,18 @@ export default function DailyFocus() {
   };
 
   const addTask = async () => {
-    const text = prompt("Enter your task:");
-    if (!text?.trim()) return;
-    await base44.entities.FocusTask.create({ focus_report_id: reportId, task_text: text.trim(), done: false, is_default: false });
+    if (!reportId) return;
+    await base44.entities.FocusTask.create({ focus_report_id: reportId, task_text: "", done: false, is_default: false });
+    refetchTasks();
+  };
+
+  const updateTask = async (task, newText) => {
+    await base44.entities.FocusTask.update(task.id, { task_text: newText });
+    refetchTasks();
+  };
+
+  const deleteTask = async (taskId) => {
+    await base44.entities.FocusTask.delete(taskId);
     refetchTasks();
   };
 
@@ -208,20 +217,35 @@ export default function DailyFocus() {
           <p className="text-sm text-muted-foreground italic py-2">No priorities added yet — setting yours daily builds mental discipline. 🧠</p>
         )}
         {tasks.map((task) => (
-          <button
-            key={task.id}
-            onClick={() => !isSubmitted && toggleTask(task)}
-            className="flex items-center gap-3 w-full text-left py-2 px-1 rounded-lg hover:bg-muted/50 transition-colors"
-            disabled={isSubmitted}
-          >
-            <div className={cn(
-              "w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors",
-              task.done ? "bg-primary border-primary" : "border-border"
-            )}>
-              {task.done && <Check className="w-3 h-3 text-primary-foreground" />}
-            </div>
-            <span className={cn("text-sm", task.done && "line-through text-muted-foreground")}>{task.task_text}</span>
-          </button>
+          <div key={task.id} className="flex items-center gap-3">
+            <button
+              onClick={() => !isSubmitted && toggleTask(task)}
+              disabled={isSubmitted}
+              className="flex-shrink-0"
+            >
+              <div className={cn(
+                "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
+                task.done ? "bg-primary border-primary" : "border-border"
+              )}>
+                {task.done && <Check className="w-3 h-3 text-primary-foreground" />}
+              </div>
+            </button>
+            <Input
+              value={task.task_text}
+              onChange={(e) => updateTask(task, e.target.value)}
+              placeholder="Enter priority..."
+              disabled={isSubmitted}
+              className={cn("flex-1 text-sm", task.done && "line-through text-muted-foreground")}
+            />
+            {!isSubmitted && (
+              <button
+                onClick={() => deleteTask(task.id)}
+                className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         ))}
         {tasks.length >= 3 && (
           <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
