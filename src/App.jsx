@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from '@/components/Layout';
+import CoachLayout from '@/components/CoachLayout';
 import Dashboard from '@/pages/Dashboard';
 import Setup from '@/pages/Setup';
 import DailyFocus from '@/pages/DailyFocus';
@@ -15,6 +16,8 @@ import LogRound from '@/pages/LogRound';
 import MentalGym from '@/pages/MentalGym';
 import Journal from '@/pages/Journal';
 import Coaching from '@/pages/Coaching';
+import Roster from '@/pages/parent-coach/Roster';
+import PlayerDashboard from '@/pages/parent-coach/PlayerDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -43,6 +46,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/setup" element={<Setup />} />
+      {/* Player routes */}
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/focus" element={<DailyFocus />} />
@@ -51,6 +55,11 @@ const AuthenticatedApp = () => {
         <Route path="/mental-gym" element={<MentalGym />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/coaching" element={<Coaching />} />
+      </Route>
+      {/* Coach / Parent routes */}
+      <Route element={<CoachLayout />}>
+        <Route path="/roster" element={<Roster />} />
+        <Route path="/player/:playerId" element={<PlayerDashboard />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

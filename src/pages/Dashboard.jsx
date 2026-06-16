@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { Activity, Flag, Target, PenLine, TrendingDown, TrendingUp, Lock } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from "recharts";
 import StatCard from "@/components/dashboard/StatCard";
@@ -20,6 +20,7 @@ export default function Dashboard() {
   useEffect(() => {
     base44.auth.me().then(u => {
       if (!u?.onboarded) navigate("/setup");
+      else if (u.role === "coach" || u.role === "parent") navigate("/roster");
       else setUser(u);
     });
   }, []);

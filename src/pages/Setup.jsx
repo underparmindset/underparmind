@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, User, Users, GraduationCap } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const GOALS = [
   "Improve my mental game",
@@ -14,8 +15,15 @@ const GOALS = [
   "Pursue professional golf",
 ];
 
+const ROLES = [
+  { value: "player", label: "Player", description: "I'm a junior golfer tracking my performance", icon: User },
+  { value: "parent", label: "Parent", description: "I want to follow my child's progress", icon: Users },
+  { value: "coach", label: "Coach", description: "I coach multiple junior players", icon: GraduationCap },
+];
+
 export default function Setup() {
   const navigate = useNavigate();
+  const [role, setRole] = useState("player");
   const [firstName, setFirstName] = useState("");
   const [age, setAge] = useState("");
   const [coachingGoal, setCoachingGoal] = useState("");
@@ -25,12 +33,13 @@ export default function Setup() {
     if (!firstName.trim()) return;
     setSaving(true);
     await base44.auth.updateMe({
+      role,
       first_name: firstName.trim(),
-      age: age ? parseInt(age) : null,
-      coaching_goal: coachingGoal,
+      age: role === "player" && age ? parseInt(age) : null,
+      coaching_goal: role === "player" ? coachingGoal : null,
       onboarded: true,
     });
-    navigate("/");
+    navigate(role === "player" ? "/" : "/roster");
   };
 
   return (
@@ -41,10 +50,38 @@ export default function Setup() {
             <span className="text-white font-display font-bold text-2xl">U</span>
           </div>
           <h1 className="text-3xl font-display font-bold text-primary-foreground">Welcome to UnderParMind</h1>
-          <p className="text-primary-foreground/70 mt-2">Let's set up your mental game profile</p>
+          <p className="text-primary-foreground/70 mt-2">Let's set up your profile</p>
         </div>
 
         <div className="bg-card rounded-2xl p-6 space-y-5 shadow-xl">
+          {/* Role selection */}
+          <div className="space-y-2">
+            <Label>I am a...</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {ROLES.map((r) => {
+                const Icon = r.icon;
+                return (
+                  <button
+                    key={r.value}
+                    onClick={() => setRole(r.value)}
+                    className={cn(
+                      "flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-center transition-all",
+                      role === r.value
+                        ? "border-primary bg-primary/5 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-xs font-semibold">{r.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {ROLES.find(r => r.value === role)?.description}
+            </p>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="firstName">First name *</Label>
             <Input
@@ -56,40 +93,44 @@ export default function Setup() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="age">Age</Label>
-            <Input
-              id="age"
-              type="number"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="Your age"
-              min={8}
-              max={30}
-              className="h-11"
-            />
-          </div>
+          {role === "player" && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  placeholder="Your age"
+                  min={8}
+                  max={30}
+                  className="h-11"
+                />
+              </div>
 
-          <div className="space-y-2">
-            <Label>Coaching goal</Label>
-            <Select value={coachingGoal} onValueChange={setCoachingGoal}>
-              <SelectTrigger className="h-11">
-                <SelectValue placeholder="What drives you?" />
-              </SelectTrigger>
-              <SelectContent>
-                {GOALS.map((g) => (
-                  <SelectItem key={g} value={g}>{g}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <div className="space-y-2">
+                <Label>Coaching goal</Label>
+                <Select value={coachingGoal} onValueChange={setCoachingGoal}>
+                  <SelectTrigger className="h-11">
+                    <SelectValue placeholder="What drives you?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GOALS.map((g) => (
+                      <SelectItem key={g} value={g}>{g}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
 
           <Button
             onClick={handleSubmit}
             disabled={!firstName.trim() || saving}
             className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90"
           >
-            {saving ? "Setting up..." : "Let's get to work"}
+            {saving ? "Setting up..." : role === "player" ? "Let's get to work" : "View my players"}
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
         </div>
