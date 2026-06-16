@@ -22,6 +22,22 @@
       },
       "description": "Additional affirmations beyond the first 3"
     },
+    "gratitude_1": {
+      "type": "string"
+    },
+    "gratitude_2": {
+      "type": "string"
+    },
+    "gratitude_3": {
+      "type": "string"
+    },
+    "extra_gratitude": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional gratitude items beyond the first 3"
+    },
     "why_win": {
       "type": "string"
     },

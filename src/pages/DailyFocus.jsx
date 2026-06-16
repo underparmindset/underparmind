@@ -34,6 +34,7 @@ export default function DailyFocus() {
   const focusStreak = calculateFocusStreak(allReports);
 
   const [affirmations, setAffirmations] = useState(["", "", ""]);
+  const [gratitude, setGratitude] = useState(["", "", ""]);
   const [whyWin, setWhyWin] = useState("");
   const [reportId, setReportId] = useState(null);
 
@@ -51,6 +52,9 @@ export default function DailyFocus() {
       const extras = todayReport.extra_affirmations || [];
       setAffirmations([...base, ...extras]);
       setWhyWin(todayReport.why_win || "");
+      const gBase = [todayReport.gratitude_1 || "", todayReport.gratitude_2 || "", todayReport.gratitude_3 || ""];
+      const gExtras = todayReport.extra_gratitude || [];
+      setGratitude([...gBase, ...gExtras]);
     } else if (allReports.length >= 0 && !todayReport) {
       // Create new report
       base44.entities.FocusReport.create({ report_date: today, submitted: false }).then((report) => {
@@ -61,7 +65,7 @@ export default function DailyFocus() {
   }, [todayReport, allReports]);
 
   const debouncedSave = useCallback(
-    debounce(async (affs, win) => {
+    debounce(async (affs, win, grats) => {
       if (!reportId) return;
       await base44.entities.FocusReport.update(reportId, {
         affirmation_1: affs[0] || "",
@@ -69,6 +73,10 @@ export default function DailyFocus() {
         affirmation_3: affs[2] || "",
         extra_affirmations: affs.slice(3).filter(Boolean),
         why_win: win,
+        gratitude_1: grats[0] || "",
+        gratitude_2: grats[1] || "",
+        gratitude_3: grats[2] || "",
+        extra_gratitude: grats.slice(3).filter(Boolean),
       });
     }, 800),
     [reportId]
@@ -78,7 +86,7 @@ export default function DailyFocus() {
     const next = [...affirmations];
     next[idx] = val;
     setAffirmations(next);
-    debouncedSave(next, whyWin);
+    debouncedSave(next, whyWin, gratitude);
   };
 
   const quickFill = (text) => {
@@ -88,19 +96,35 @@ export default function DailyFocus() {
     } else {
       const next = [...affirmations, text];
       setAffirmations(next);
-      debouncedSave(next, whyWin);
+      debouncedSave(next, whyWin, gratitude);
     }
   };
 
   const addAffirmation = () => {
-    const next = [...affirmations, ""];
-    setAffirmations(next);
+    setAffirmations(prev => [...prev, ""]);
   };
 
   const removeAffirmation = (idx) => {
     const next = affirmations.filter((_, i) => i !== idx);
     setAffirmations(next);
-    debouncedSave(next, whyWin);
+    debouncedSave(next, whyWin, gratitude);
+  };
+
+  const updateGratitude = (idx, val) => {
+    const next = [...gratitude];
+    next[idx] = val;
+    setGratitude(next);
+    debouncedSave(affirmations, whyWin, next);
+  };
+
+  const addGratitude = () => {
+    setGratitude(prev => [...prev, ""]);
+  };
+
+  const removeGratitude = (idx) => {
+    const next = gratitude.filter((_, i) => i !== idx);
+    setGratitude(next);
+    debouncedSave(affirmations, whyWin, next);
   };
 
   const toggleTask = async (task) => {
@@ -135,6 +159,10 @@ export default function DailyFocus() {
       affirmation_3: affirmations[2] || "",
       extra_affirmations: affirmations.slice(3).filter(Boolean),
       why_win: whyWin,
+      gratitude_1: gratitude[0] || "",
+      gratitude_2: gratitude[1] || "",
+      gratitude_3: gratitude[2] || "",
+      extra_gratitude: gratitude.slice(3).filter(Boolean),
       submitted: true,
     });
     queryClient.invalidateQueries({ queryKey: ["focusReports"] });
@@ -254,12 +282,44 @@ export default function DailyFocus() {
         )}
       </div>
 
+      {/* Gratitude */}
+      <div className="bg-card rounded-xl border border-border p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-display font-bold text-lg">What am I Grateful for Today?</h2>
+          {!isSubmitted && (
+            <Button variant="ghost" size="sm" onClick={addGratitude}>
+              <Plus className="w-4 h-4 mr-1" /> Add
+            </Button>
+          )}
+        </div>
+        {gratitude.map((g, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <span className="w-7 h-7 rounded-full bg-accent/10 text-accent font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
+            <Input
+              value={g}
+              onChange={(e) => updateGratitude(i, e.target.value)}
+              placeholder={`I'm grateful for...`}
+              disabled={isSubmitted}
+              className="flex-1"
+            />
+            {!isSubmitted && gratitude.length > 1 && (
+              <button
+                onClick={() => removeGratitude(i)}
+                className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
       {/* Why will I win */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-3">
         <h2 className="font-display font-bold text-lg">Why will I win today?</h2>
         <Textarea
           value={whyWin}
-          onChange={(e) => { setWhyWin(e.target.value); debouncedSave(affirmations, e.target.value); }}
+          onChange={(e) => { setWhyWin(e.target.value); debouncedSave(affirmations, e.target.value, gratitude); }}
           placeholder="Write your reason..."
           rows={3}
           disabled={isSubmitted}
