@@ -1,11 +1,12 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { Users, LogOut } from "lucide-react";
+import { Users, LogOut, Dumbbell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 
 const navItems = [
   { path: "/roster", label: "My Players", icon: Users },
+  { path: "/gym-editor", label: "Mental Gym", icon: Dumbbell },
 ];
 
 export default function CoachLayout() {

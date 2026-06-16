@@ -18,6 +18,7 @@ import Journal from '@/pages/Journal';
 import Coaching from '@/pages/Coaching';
 import Roster from '@/pages/parent-coach/Roster';
 import PlayerDashboard from '@/pages/parent-coach/PlayerDashboard';
+import GymEditor from '@/pages/admin/GymEditor';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
       <Route element={<CoachLayout />}>
         <Route path="/roster" element={<Roster />} />
         <Route path="/player/:playerId" element={<PlayerDashboard />} />
+        <Route path="/gym-editor" element={<GymEditor />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

@@ -1,0 +1,48 @@
+{
+  "name": "GymModule",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Module title"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short summary shown in the card"
+    },
+    "content": {
+      "type": "string",
+      "description": "Full instructional content (supports markdown)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Mindset",
+        "Routine",
+        "Focus",
+        "Resilience",
+        "Confidence",
+        "Course Management"
+      ],
+      "description": "Module category"
+    },
+    "week_label": {
+      "type": "string",
+      "description": "e.g. 'Week of Jun 16' \u2014 displayed as a badge"
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Pin to top as this week's featured module"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "title",
+    "summary",
+    "content"
+  ]
+}
