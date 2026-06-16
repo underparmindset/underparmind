@@ -235,6 +235,11 @@ export default function DailyFocus() {
           }
           </div>
         )}
+        {filledAffirmations.length >= 3 && (
+          <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
+            <Flame className="w-3 h-3" /> +1 mental credit for your affirmations today
+          </p>
+        )}
         <div className="flex flex-wrap gap-2">
           {QUICK_AFFIRMATIONS.map((q) =>
           <button
@@ -317,6 +322,11 @@ export default function DailyFocus() {
           }
           </div>
         )}
+        {filledGratitude.length >= 3 && (
+          <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
+            <Flame className="w-3 h-3" /> +1 mental credit for your gratitude today
+          </p>
+        )}
       </div>
 
       {/* Why will I win */}
@@ -328,7 +338,11 @@ export default function DailyFocus() {
           placeholder="Write your reason..."
           rows={3}
           disabled={isSubmitted} />
-        
+        {whyWin.trim() && (
+          <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
+            <Flame className="w-3 h-3" /> +1 mental credit for defining your win today
+          </p>
+        )}
       </div>
 
       {!isSubmitted &&
