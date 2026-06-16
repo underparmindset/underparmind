@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +23,14 @@ const EMPTY_FORM = {
 
 export default function GymEditor() {
   const queryClient = useQueryClient();
-  const [editing, setEditing] = useState(null); // null = closed, "new" = new, id = editing existing
+  const navigate = useNavigate();
+  const [editing, setEditing] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(u => {
+      if (u?.role !== "admin") navigate("/");
+    });
+  }, []); // null = closed, "new" = new, id = editing existing
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
 

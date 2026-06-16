@@ -61,6 +61,9 @@ const AuthenticatedApp = () => {
       <Route element={<CoachLayout />}>
         <Route path="/roster" element={<Roster />} />
         <Route path="/player/:playerId" element={<PlayerDashboard />} />
+      </Route>
+      {/* Admin-only routes */}
+      <Route element={<Layout />}>
         <Route path="/gym-editor" element={<GymEditor />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
