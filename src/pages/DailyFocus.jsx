@@ -19,11 +19,7 @@ const QUICK_AFFIRMATIONS = [
   "I own the last 6 holes",
 ];
 
-const DEFAULT_TASKS = [
-  "Say affirmations out loud",
-  "10-min visualization",
-  "One focused practice block",
-];
+
 
 export default function DailyFocus() {
   const queryClient = useQueryClient();
@@ -57,13 +53,9 @@ export default function DailyFocus() {
       setWhyWin(todayReport.why_win || "");
     } else if (allReports.length >= 0 && !todayReport) {
       // Create new report
-      base44.entities.FocusReport.create({ report_date: today, submitted: false }).then(async (report) => {
+      base44.entities.FocusReport.create({ report_date: today, submitted: false }).then((report) => {
         setReportId(report.id);
-        await base44.entities.FocusTask.bulkCreate(
-          DEFAULT_TASKS.map(t => ({ focus_report_id: report.id, task_text: t, done: false, is_default: true }))
-        );
         queryClient.invalidateQueries({ queryKey: ["focusReports"] });
-        refetchTasks();
       });
     }
   }, [todayReport, allReports]);
@@ -212,6 +204,9 @@ export default function DailyFocus() {
             <Plus className="w-4 h-4 mr-1" /> Add
           </Button>
         </div>
+        {tasks.length === 0 && !isSubmitted && (
+          <p className="text-sm text-muted-foreground italic py-2">No priorities added yet — setting yours daily builds mental discipline. 🧠</p>
+        )}
         {tasks.map((task) => (
           <button
             key={task.id}
@@ -228,6 +223,11 @@ export default function DailyFocus() {
             <span className={cn("text-sm", task.done && "line-through text-muted-foreground")}>{task.task_text}</span>
           </button>
         ))}
+        {tasks.length >= 3 && (
+          <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
+            <Flame className="w-3 h-3" /> +1 mental credit for setting your priorities today
+          </p>
+        )}
       </div>
 
       {/* Why will I win */}
