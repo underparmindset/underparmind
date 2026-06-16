@@ -25,7 +25,7 @@ export default function CoachLayout() {
               <span className="text-white font-display font-bold text-sm">U</span>
             </div>
             <div>
-              <span className="text-white font-display font-bold text-lg tracking-tight">UnderParMind</span>
+              <span className="text-white font-display font-bold text-lg tracking-tight">Under Par Mindset</span>
               <span className="ml-2 text-xs font-normal text-primary-foreground/60 uppercase tracking-widest">
                 {user?.role === "coach" ? "Coach" : "Parent"} View
               </span>

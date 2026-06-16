@@ -24,7 +24,7 @@ export default function Layout() {
             <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
               <span className="text-white font-display font-bold text-sm">U</span>
             </div>
-            <span className="text-white font-display font-bold text-lg tracking-tight">UnderParMind</span>
+            <span className="text-white font-display font-bold text-lg tracking-tight">Under Par Mindset</span>
           </Link>
         </div>
         {/* Desktop nav */}
