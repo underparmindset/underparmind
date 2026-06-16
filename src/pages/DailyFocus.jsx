@@ -304,7 +304,7 @@ export default function DailyFocus() {
         </div>
         {gratitude.map((g, i) =>
         <div key={i} className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full font-bold text-sm flex items-center justify-center flex-shrink-0 bg-[hsl(var(--input))] text-[hsl(var(--primary))]">{i + 1}</span>
+            <span className="w-7 h-7 rounded-full bg-accent/10 text-accent font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
             <Input
             value={g}
             onChange={(e) => updateGratitude(i, e.target.value)}
