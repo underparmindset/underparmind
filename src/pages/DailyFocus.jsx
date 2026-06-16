@@ -199,7 +199,7 @@ export default function DailyFocus() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-display font-bold">Teeing It Up</h1>
+        <h1 className="text-2xl md:text-3xl font-display font-bold">Win The Day</h1>
         <p className="text-muted-foreground text-sm mt-1 flex items-center gap-2">
           <Flame className="w-4 h-4 text-accent" /> {focusStreak}-day streak
         </p>
