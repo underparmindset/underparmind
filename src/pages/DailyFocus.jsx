@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Plus, Flame, Sparkles } from "lucide-react";
+import { Check, Plus, Flame, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { format, startOfWeek, addDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -51,7 +51,9 @@ export default function DailyFocus() {
   useEffect(() => {
     if (todayReport) {
       setReportId(todayReport.id);
-      setAffirmations([todayReport.affirmation_1 || "", todayReport.affirmation_2 || "", todayReport.affirmation_3 || ""]);
+      const base = [todayReport.affirmation_1 || "", todayReport.affirmation_2 || "", todayReport.affirmation_3 || ""];
+      const extras = todayReport.extra_affirmations || [];
+      setAffirmations([...base, ...extras]);
       setWhyWin(todayReport.why_win || "");
     } else if (allReports.length >= 0 && !todayReport) {
       // Create new report
@@ -70,7 +72,11 @@ export default function DailyFocus() {
     debounce(async (affs, win) => {
       if (!reportId) return;
       await base44.entities.FocusReport.update(reportId, {
-        affirmation_1: affs[0], affirmation_2: affs[1], affirmation_3: affs[2], why_win: win,
+        affirmation_1: affs[0] || "",
+        affirmation_2: affs[1] || "",
+        affirmation_3: affs[2] || "",
+        extra_affirmations: affs.slice(3).filter(Boolean),
+        why_win: win,
       });
     }, 800),
     [reportId]
@@ -85,8 +91,24 @@ export default function DailyFocus() {
 
   const quickFill = (text) => {
     const idx = affirmations.findIndex(a => !a);
-    if (idx === -1) return;
-    updateAffirmation(idx, text);
+    if (idx !== -1) {
+      updateAffirmation(idx, text);
+    } else {
+      const next = [...affirmations, text];
+      setAffirmations(next);
+      debouncedSave(next, whyWin);
+    }
+  };
+
+  const addAffirmation = () => {
+    const next = [...affirmations, ""];
+    setAffirmations(next);
+  };
+
+  const removeAffirmation = (idx) => {
+    const next = affirmations.filter((_, i) => i !== idx);
+    setAffirmations(next);
+    debouncedSave(next, whyWin);
   };
 
   const toggleTask = async (task) => {
@@ -102,13 +124,17 @@ export default function DailyFocus() {
   };
 
   const submitReport = async () => {
-    if (!affirmations[0] || !affirmations[1] || !affirmations[2]) {
-      toast.error("Fill in all 3 affirmations first");
+    if (!affirmations[0]) {
+      toast.error("Add at least 1 affirmation first");
       return;
     }
     await base44.entities.FocusReport.update(reportId, {
-      affirmation_1: affirmations[0], affirmation_2: affirmations[1], affirmation_3: affirmations[2],
-      why_win: whyWin, submitted: true,
+      affirmation_1: affirmations[0] || "",
+      affirmation_2: affirmations[1] || "",
+      affirmation_3: affirmations[2] || "",
+      extra_affirmations: affirmations.slice(3).filter(Boolean),
+      why_win: whyWin,
+      submitted: true,
     });
     queryClient.invalidateQueries({ queryKey: ["focusReports"] });
     toast.success("Focus report submitted! 🔥");
@@ -136,7 +162,14 @@ export default function DailyFocus() {
 
       {/* Affirmations */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-        <h2 className="font-display font-bold text-lg">Today's Affirmations</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display font-bold text-lg">Today's Affirmations</h2>
+          {!isSubmitted && (
+            <Button variant="ghost" size="sm" onClick={addAffirmation}>
+              <Plus className="w-4 h-4 mr-1" /> Add
+            </Button>
+          )}
+        </div>
         {affirmations.map((aff, i) => (
           <div key={i} className="flex items-center gap-3">
             <span className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
@@ -147,6 +180,14 @@ export default function DailyFocus() {
               disabled={isSubmitted}
               className="flex-1"
             />
+            {!isSubmitted && affirmations.length > 1 && (
+              <button
+                onClick={() => removeAffirmation(i)}
+                className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         ))}
         <div className="flex flex-wrap gap-2">

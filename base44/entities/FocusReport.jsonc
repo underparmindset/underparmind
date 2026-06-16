@@ -15,6 +15,13 @@
     "affirmation_3": {
       "type": "string"
     },
+    "extra_affirmations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional affirmations beyond the first 3"
+    },
     "why_win": {
       "type": "string"
     },
