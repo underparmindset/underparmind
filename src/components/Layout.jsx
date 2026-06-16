@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/focus", label: "Focus", icon: Target },
+  { path: "/focus", label: "Teeing It Up", icon: Target },
   { path: "/log-round", label: "Log Round", icon: Flag },
   { path: "/goals", label: "Goals", icon: BookOpen },
   { path: "/mental-gym", label: "Mental Gym", icon: Dumbbell },
