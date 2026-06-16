@@ -6,7 +6,15 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
-// Add page imports here
+import Layout from '@/components/Layout';
+import Dashboard from '@/pages/Dashboard';
+import Setup from '@/pages/Setup';
+import DailyFocus from '@/pages/DailyFocus';
+import Goals from '@/pages/Goals';
+import LogRound from '@/pages/LogRound';
+import MentalGym from '@/pages/MentalGym';
+import Journal from '@/pages/Journal';
+import Coaching from '@/pages/Coaching';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -34,7 +42,16 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route path="/setup" element={<Setup />} />
+      <Route element={<Layout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/focus" element={<DailyFocus />} />
+        <Route path="/goals" element={<Goals />} />
+        <Route path="/log-round" element={<LogRound />} />
+        <Route path="/mental-gym" element={<MentalGym />} />
+        <Route path="/journal" element={<Journal />} />
+        <Route path="/coaching" element={<Coaching />} />
+      </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

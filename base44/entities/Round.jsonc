@@ -1,0 +1,96 @@
+{
+  "name": "Round",
+  "type": "object",
+  "properties": {
+    "course_name": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "round_type": {
+      "type": "string",
+      "enum": [
+        "Practice",
+        "Casual",
+        "Qualifier",
+        "Tournament"
+      ]
+    },
+    "hole_pars": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "hole_scores": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "hole_fir": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      }
+    },
+    "hole_gir": {
+      "type": "array",
+      "items": {
+        "type": "boolean"
+      }
+    },
+    "hole_putts": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
+    },
+    "total_score": {
+      "type": "number"
+    },
+    "total_par": {
+      "type": "number"
+    },
+    "total_putts": {
+      "type": "number"
+    },
+    "fir_count": {
+      "type": "number"
+    },
+    "fir_total": {
+      "type": "number"
+    },
+    "gir_count": {
+      "type": "number"
+    },
+    "calm_rating": {
+      "type": "number"
+    },
+    "routine_pct": {
+      "type": "number"
+    },
+    "reset_rating": {
+      "type": "number"
+    },
+    "focus6_rating": {
+      "type": "number"
+    },
+    "regret_shot": {
+      "type": "string"
+    },
+    "well_done": {
+      "type": "string"
+    },
+    "holes_played": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "course_name",
+    "date",
+    "round_type"
+  ]
+}

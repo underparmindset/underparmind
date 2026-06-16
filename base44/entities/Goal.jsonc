@@ -1,0 +1,37 @@
+{
+  "name": "Goal",
+  "type": "object",
+  "properties": {
+    "goal_text": {
+      "type": "string"
+    },
+    "measure": {
+      "type": "string"
+    },
+    "horizon": {
+      "type": "string",
+      "enum": [
+        "week",
+        "month",
+        "quarter"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "hit",
+        "missed"
+      ],
+      "default": "open"
+    },
+    "resolved_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "goal_text",
+    "horizon"
+  ]
+}

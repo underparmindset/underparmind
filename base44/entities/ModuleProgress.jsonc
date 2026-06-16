@@ -1,0 +1,20 @@
+{
+  "name": "ModuleProgress",
+  "type": "object",
+  "properties": {
+    "module_id": {
+      "type": "string"
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "module_id"
+  ]
+}

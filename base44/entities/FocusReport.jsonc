@@ -1,0 +1,29 @@
+{
+  "name": "FocusReport",
+  "type": "object",
+  "properties": {
+    "report_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "affirmation_1": {
+      "type": "string"
+    },
+    "affirmation_2": {
+      "type": "string"
+    },
+    "affirmation_3": {
+      "type": "string"
+    },
+    "why_win": {
+      "type": "string"
+    },
+    "submitted": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "report_date"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "FocusTask",
+  "type": "object",
+  "properties": {
+    "focus_report_id": {
+      "type": "string"
+    },
+    "task_text": {
+      "type": "string"
+    },
+    "done": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "task_text"
+  ]
+}

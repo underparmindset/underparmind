@@ -1,0 +1,34 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "player",
+        "parent",
+        "coach"
+      ],
+      "default": "player"
+    },
+    "first_name": {
+      "type": "string"
+    },
+    "age": {
+      "type": "number"
+    },
+    "coaching_goal": {
+      "type": "string"
+    },
+    "ghin_number": {
+      "type": "string"
+    },
+    "handicap_index": {
+      "type": "number"
+    },
+    "onboarded": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
