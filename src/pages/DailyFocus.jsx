@@ -148,9 +148,25 @@ export default function DailyFocus() {
     refetchTasks();
   };
 
+  const filledTasks = tasks.filter(t => t.task_text?.trim());
+  const filledGratitude = gratitude.filter(g => g?.trim());
+  const filledAffirmations = affirmations.filter(a => a?.trim());
+
   const submitReport = async () => {
-    if (!affirmations[0]) {
+    if (filledAffirmations.length < 1) {
       toast.error("Add at least 1 affirmation first");
+      return;
+    }
+    if (filledTasks.length < 3) {
+      toast.error("Add at least 3 top priorities before submitting");
+      return;
+    }
+    if (filledGratitude.length < 3) {
+      toast.error("Add at least 3 things you're grateful for before submitting");
+      return;
+    }
+    if (!whyWin.trim()) {
+      toast.error("Fill in why you will win today");
       return;
     }
     await base44.entities.FocusReport.update(reportId, {
@@ -236,7 +252,7 @@ export default function DailyFocus() {
       {/* Tasks */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-display font-bold text-lg">Today's Top Priorities <span className="text-sm font-normal text-muted-foreground">(at least 3)</span></h2>
+          <h2 className="font-display font-bold text-lg">Today's Top Priorities <span className={cn("text-sm font-normal", filledTasks.length >= 3 ? "text-primary" : "text-muted-foreground")}>{filledTasks.length >= 3 ? `✓ ${filledTasks.length} added` : `(at least 3 — ${filledTasks.length}/3)`}</span></h2>
           <Button variant="ghost" size="sm" onClick={addTask} disabled={isSubmitted}>
             <Plus className="w-4 h-4 mr-1" /> Add
           </Button>
@@ -285,7 +301,7 @@ export default function DailyFocus() {
       {/* Gratitude */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display font-bold text-lg">What am I Grateful for Today?</h2>
+          <h2 className="font-display font-bold text-lg">What am I Grateful for Today? <span className={cn("text-sm font-normal", filledGratitude.length >= 3 ? "text-primary" : "text-muted-foreground")}>{filledGratitude.length >= 3 ? `✓ ${filledGratitude.length} added` : `(${filledGratitude.length}/3)`}</span></h2>
           {!isSubmitted && (
             <Button variant="ghost" size="sm" onClick={addGratitude}>
               <Plus className="w-4 h-4 mr-1" /> Add
