@@ -6,12 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { Save, RotateCcw } from "lucide-react";
+import { Save, RotateCcw, Link2, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import ScorecardTable from "@/components/loground/ScorecardTable";
 import LiveSummary from "@/components/loground/LiveSummary";
+import GHINConnect from "@/components/loground/GHINConnect";
 
 const EMPTY_HOLE = () => ({ par: 4, score: null, fir: false, gir: false, putts: null });
 
@@ -201,6 +202,9 @@ export default function LogRound() {
       <Button onClick={saveRound} disabled={saving || holesWithScore.length < 9} className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90">
         <Save className="w-5 h-5 mr-2" />{saving ? "Saving..." : "Save Round"}
       </Button>
+
+      {/* GHIN Integration */}
+      <GHINConnect />
     </div>
   );
 }
