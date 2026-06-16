@@ -207,7 +207,7 @@ export default function DailyFocus() {
       {/* Tasks */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-display font-bold text-lg">Focus Tasks</h2>
+          <h2 className="font-display font-bold text-lg">Today's Top Priorities</h2>
           <Button variant="ghost" size="sm" onClick={addTask} disabled={isSubmitted}>
             <Plus className="w-4 h-4 mr-1" /> Add
           </Button>
