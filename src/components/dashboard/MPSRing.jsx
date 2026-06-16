@@ -1,7 +1,7 @@
 export default function MPSRing({ score }) {
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+  const offset = circumference - score / 100 * circumference;
   const color = score >= 70 ? "hsl(var(--primary))" : score >= 40 ? "hsl(var(--accent))" : "hsl(var(--destructive))";
 
   return (
@@ -15,17 +15,17 @@ export default function MPSRing({ score }) {
             strokeWidth="8" strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            className="transition-all duration-1000 ease-out"
-          />
+            className="transition-all duration-1000 ease-out" />
+          
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-display font-bold">{score}</span>
             <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold leading-none">MPS</span>
           </div>
-          <span className="text-[8px] uppercase tracking-wider text-muted-foreground/70 font-semibold text-center leading-tight px-2">Mental Performance Score</span>
+          <span className="text-[8px] uppercase tracking-wider text-muted-foreground/70 font-semibold text-center leading-tight px-2 bg-[hsl(var(--primary))]">MENTAL PERFORMANCE SCORE</span>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
