@@ -260,26 +260,15 @@ export default function DailyFocus() {
         {tasks.length === 0 && !isSubmitted && (
           <p className="text-sm text-muted-foreground italic py-2">No priorities added yet — setting yours daily builds mental discipline. 🧠</p>
         )}
-        {tasks.map((task) => (
+        {tasks.map((task, i) => (
           <div key={task.id} className="flex items-center gap-3">
-            <button
-              onClick={() => !isSubmitted && toggleTask(task)}
-              disabled={isSubmitted}
-              className="flex-shrink-0"
-            >
-              <div className={cn(
-                "w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
-                task.done ? "bg-primary border-primary" : "border-border"
-              )}>
-                {task.done && <Check className="w-3 h-3 text-primary-foreground" />}
-              </div>
-            </button>
+            <span className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
             <Input
               value={task.task_text}
               onChange={(e) => updateTask(task, e.target.value)}
               placeholder="Enter priority..."
               disabled={isSubmitted}
-              className={cn("flex-1 text-sm", task.done && "line-through text-muted-foreground")}
+              className="flex-1 text-sm"
             />
             {!isSubmitted && (
               <button
