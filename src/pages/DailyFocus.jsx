@@ -12,12 +12,12 @@ import { calculateFocusStreak } from "@/lib/calculations";
 import { debounce } from "lodash";
 
 const QUICK_AFFIRMATIONS = [
-  "I trust my swing under pressure",
-  "I am calm on the first tee",
-  "I commit to every shot",
-  "I bounce back fast",
-  "I own the last 6 holes",
-];
+"I trust my swing under pressure",
+"I am calm on the first tee",
+"I commit to every shot",
+"I bounce back fast",
+"I own the last 6 holes"];
+
 
 
 
@@ -27,10 +27,10 @@ export default function DailyFocus() {
 
   const { data: allReports = [] } = useQuery({
     queryKey: ["focusReports"],
-    queryFn: () => base44.entities.FocusReport.list("-report_date", 60),
+    queryFn: () => base44.entities.FocusReport.list("-report_date", 60)
   });
 
-  const todayReport = allReports.find(r => r.report_date === today);
+  const todayReport = allReports.find((r) => r.report_date === today);
   const focusStreak = calculateFocusStreak(allReports);
 
   const [affirmations, setAffirmations] = useState(["", "", ""]);
@@ -41,7 +41,7 @@ export default function DailyFocus() {
   const { data: tasks = [], refetch: refetchTasks } = useQuery({
     queryKey: ["focusTasks", reportId],
     queryFn: () => reportId ? base44.entities.FocusTask.filter({ focus_report_id: reportId }) : [],
-    enabled: !!reportId,
+    enabled: !!reportId
   });
 
   // Initialize or load report
@@ -76,7 +76,7 @@ export default function DailyFocus() {
         gratitude_1: grats[0] || "",
         gratitude_2: grats[1] || "",
         gratitude_3: grats[2] || "",
-        extra_gratitude: grats.slice(3).filter(Boolean),
+        extra_gratitude: grats.slice(3).filter(Boolean)
       });
     }, 800),
     [reportId]
@@ -90,7 +90,7 @@ export default function DailyFocus() {
   };
 
   const quickFill = (text) => {
-    const idx = affirmations.findIndex(a => !a);
+    const idx = affirmations.findIndex((a) => !a);
     if (idx !== -1) {
       updateAffirmation(idx, text);
     } else {
@@ -101,7 +101,7 @@ export default function DailyFocus() {
   };
 
   const addAffirmation = () => {
-    setAffirmations(prev => [...prev, ""]);
+    setAffirmations((prev) => [...prev, ""]);
   };
 
   const removeAffirmation = (idx) => {
@@ -118,7 +118,7 @@ export default function DailyFocus() {
   };
 
   const addGratitude = () => {
-    setGratitude(prev => [...prev, ""]);
+    setGratitude((prev) => [...prev, ""]);
   };
 
   const removeGratitude = (idx) => {
@@ -148,9 +148,9 @@ export default function DailyFocus() {
     refetchTasks();
   };
 
-  const filledTasks = tasks.filter(t => t.task_text?.trim());
-  const filledGratitude = gratitude.filter(g => g?.trim());
-  const filledAffirmations = affirmations.filter(a => a?.trim());
+  const filledTasks = tasks.filter((t) => t.task_text?.trim());
+  const filledGratitude = gratitude.filter((g) => g?.trim());
+  const filledAffirmations = affirmations.filter((a) => a?.trim());
 
   const submitReport = async () => {
     if (filledAffirmations.length < 1) {
@@ -179,7 +179,7 @@ export default function DailyFocus() {
       gratitude_2: gratitude[1] || "",
       gratitude_3: gratitude[2] || "",
       extra_gratitude: gratitude.slice(3).filter(Boolean),
-      submitted: true,
+      submitted: true
     });
     queryClient.invalidateQueries({ queryKey: ["focusReports"] });
     toast.success("Focus report submitted! 🔥");
@@ -190,7 +190,7 @@ export default function DailyFocus() {
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(weekStart, i);
     const dateStr = format(date, "yyyy-MM-dd");
-    const report = allReports.find(r => r.report_date === dateStr);
+    const report = allReports.find((r) => r.report_date === dateStr);
     return { date, dateStr, dayLabel: format(date, "EEE"), report };
   });
 
@@ -209,43 +209,43 @@ export default function DailyFocus() {
       <div className="bg-card rounded-xl border border-border p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-display font-bold text-lg">Today's Affirmations</h2>
-          {!isSubmitted && (
-            <Button variant="ghost" size="sm" onClick={addAffirmation}>
+          {!isSubmitted &&
+          <Button variant="ghost" size="sm" onClick={addAffirmation}>
               <Plus className="w-4 h-4 mr-1" /> Add
             </Button>
-          )}
+          }
         </div>
-        {affirmations.map((aff, i) => (
-          <div key={i} className="flex items-center gap-3">
+        {affirmations.map((aff, i) =>
+        <div key={i} className="flex items-center gap-3">
             <span className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
             <Input
-              value={aff}
-              onChange={(e) => updateAffirmation(i, e.target.value)}
-              placeholder={`Affirmation ${i + 1}`}
-              disabled={isSubmitted}
-              className="flex-1"
-            />
-            {!isSubmitted && affirmations.length > 1 && (
-              <button
-                onClick={() => removeAffirmation(i)}
-                className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-              >
+            value={aff}
+            onChange={(e) => updateAffirmation(i, e.target.value)}
+            placeholder={`Affirmation ${i + 1}`}
+            disabled={isSubmitted}
+            className="flex-1" />
+          
+            {!isSubmitted && affirmations.length > 1 &&
+          <button
+            onClick={() => removeAffirmation(i)}
+            className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0">
+            
                 <X className="w-4 h-4" />
               </button>
-            )}
+          }
           </div>
-        ))}
+        )}
         <div className="flex flex-wrap gap-2">
-          {QUICK_AFFIRMATIONS.map((q) => (
-            <button
-              key={q}
-              onClick={() => quickFill(q)}
-              disabled={isSubmitted}
-              className="px-3 py-1.5 rounded-full bg-muted text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-50"
-            >
+          {QUICK_AFFIRMATIONS.map((q) =>
+          <button
+            key={q}
+            onClick={() => quickFill(q)}
+            disabled={isSubmitted}
+            className="px-3 py-1.5 rounded-full bg-muted text-xs font-medium text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-50">
+            
               <Sparkles className="w-3 h-3 inline mr-1" />{q}
             </button>
-          ))}
+          )}
         </div>
       </div>
 
@@ -257,66 +257,66 @@ export default function DailyFocus() {
             <Plus className="w-4 h-4 mr-1" /> Add
           </Button>
         </div>
-        {tasks.length === 0 && !isSubmitted && (
-          <p className="text-sm text-muted-foreground italic py-2">No priorities added yet — setting yours daily builds mental discipline. 🧠</p>
-        )}
-        {tasks.map((task, i) => (
-          <div key={task.id} className="flex items-center gap-3">
+        {tasks.length === 0 && !isSubmitted &&
+        <p className="text-sm text-muted-foreground italic py-2">No priorities added yet — setting yours daily builds mental discipline. 🧠</p>
+        }
+        {tasks.map((task, i) =>
+        <div key={task.id} className="flex items-center gap-3">
             <span className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
             <Input
-              value={task.task_text}
-              onChange={(e) => updateTask(task, e.target.value)}
-              placeholder="Enter priority..."
-              disabled={isSubmitted}
-              className="flex-1 text-sm"
-            />
-            {!isSubmitted && (
-              <button
-                onClick={() => deleteTask(task.id)}
-                className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-              >
+            value={task.task_text}
+            onChange={(e) => updateTask(task, e.target.value)}
+            placeholder="Enter priority..."
+            disabled={isSubmitted}
+            className="flex-1 text-sm" />
+          
+            {!isSubmitted &&
+          <button
+            onClick={() => deleteTask(task.id)}
+            className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0">
+            
                 <X className="w-4 h-4" />
               </button>
-            )}
+          }
           </div>
-        ))}
-        {tasks.length >= 3 && (
-          <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
+        )}
+        {tasks.length >= 3 &&
+        <p className="text-xs text-primary/70 font-medium flex items-center gap-1 pt-1">
             <Flame className="w-3 h-3" /> +1 mental credit for setting your priorities today
           </p>
-        )}
+        }
       </div>
 
       {/* Gratitude */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-display font-bold text-lg">What am I Grateful for Today? <span className={cn("text-sm font-normal", filledGratitude.length >= 3 ? "text-primary" : "text-muted-foreground")}>{filledGratitude.length >= 3 ? `✓ ${filledGratitude.length} added` : `(${filledGratitude.length}/3)`}</span></h2>
-          {!isSubmitted && (
-            <Button variant="ghost" size="sm" onClick={addGratitude}>
+          {!isSubmitted &&
+          <Button variant="ghost" size="sm" onClick={addGratitude}>
               <Plus className="w-4 h-4 mr-1" /> Add
             </Button>
-          )}
+          }
         </div>
-        {gratitude.map((g, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-accent/10 text-accent font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
+        {gratitude.map((g, i) =>
+        <div key={i} className="flex items-center gap-3">
+            <span className="w-7 h-7 rounded-full text-accent font-bold text-sm flex items-center justify-center flex-shrink-0 bg-[hsl(var(--muted))]">{i + 1}</span>
             <Input
-              value={g}
-              onChange={(e) => updateGratitude(i, e.target.value)}
-              placeholder={`I'm grateful for...`}
-              disabled={isSubmitted}
-              className="flex-1"
-            />
-            {!isSubmitted && gratitude.length > 1 && (
-              <button
-                onClick={() => removeGratitude(i)}
-                className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
-              >
+            value={g}
+            onChange={(e) => updateGratitude(i, e.target.value)}
+            placeholder={`I'm grateful for...`}
+            disabled={isSubmitted}
+            className="flex-1" />
+          
+            {!isSubmitted && gratitude.length > 1 &&
+          <button
+            onClick={() => removeGratitude(i)}
+            className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0">
+            
                 <X className="w-4 h-4" />
               </button>
-            )}
+          }
           </div>
-        ))}
+        )}
       </div>
 
       {/* Why will I win */}
@@ -324,25 +324,25 @@ export default function DailyFocus() {
         <h2 className="font-display font-bold text-lg">Why will I win today?</h2>
         <Textarea
           value={whyWin}
-          onChange={(e) => { setWhyWin(e.target.value); debouncedSave(affirmations, e.target.value, gratitude); }}
+          onChange={(e) => {setWhyWin(e.target.value);debouncedSave(affirmations, e.target.value, gratitude);}}
           placeholder="Write your reason..."
           rows={3}
-          disabled={isSubmitted}
-        />
+          disabled={isSubmitted} />
+        
       </div>
 
-      {!isSubmitted && (
-        <Button onClick={submitReport} className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90">
+      {!isSubmitted &&
+      <Button onClick={submitReport} className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90">
           Submit Focus Report
         </Button>
-      )}
-      {isSubmitted && (
-        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-center">
+      }
+      {isSubmitted &&
+      <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-center">
           <p className="text-primary font-semibold flex items-center justify-center gap-2">
             <Check className="w-5 h-5" /> Focus report submitted — go crush it!
           </p>
         </div>
-      )}
+      }
 
       {/* This Week */}
       <div className="bg-card rounded-xl border border-border overflow-hidden">
@@ -365,11 +365,11 @@ export default function DailyFocus() {
                 <p className="text-[9px] mt-1 text-muted-foreground">
                   {isDone ? "Won" : d.report ? "Showed up" : "—"}
                 </p>
-              </div>
-            );
+              </div>);
+
           })}
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
