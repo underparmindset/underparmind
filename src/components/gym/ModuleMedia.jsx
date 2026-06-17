@@ -45,7 +45,7 @@ export default function ModuleMedia({ mod }) {
         <div>
           <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Video</p>
           {embedUrl ? (
-            <div className="relative w-full rounded-lg overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+            <div className="relative rounded-lg overflow-hidden max-w-xl" style={{ paddingBottom: "min(56.25%, 360px)", height: 0 }}>
               <iframe
                 src={embedUrl}
                 className="absolute inset-0 w-full h-full"
@@ -55,7 +55,7 @@ export default function ModuleMedia({ mod }) {
               />
             </div>
           ) : (
-            <video controls className="w-full rounded-lg bg-black" style={{ maxHeight: "360px" }}>
+            <video controls className="w-full rounded-lg bg-black max-w-xl">
               <source src={mod.video_url} />
               Your browser does not support video playback.
             </video>
