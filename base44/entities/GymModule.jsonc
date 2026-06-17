@@ -38,6 +38,36 @@
     "order": {
       "type": "number",
       "description": "Display order"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "URL of an uploaded video or external video link (YouTube, Vimeo, etc.)"
+    },
+    "article_url": {
+      "type": "string",
+      "description": "Link to an external article"
+    },
+    "article_title": {
+      "type": "string",
+      "description": "Display title for the article link"
+    },
+    "social_links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Social media links (Instagram, TikTok, YouTube, X, etc.)"
     }
   },
   "required": [

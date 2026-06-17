@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { generateInsights } from "@/lib/calculations";
 import ReactMarkdown from "react-markdown";
+import ModuleMedia from "@/components/gym/ModuleMedia";
 
 export default function MentalGym() {
   const queryClient = useQueryClient();
@@ -141,6 +142,7 @@ export default function MentalGym() {
                   <div className="prose prose-sm max-w-none text-foreground text-sm leading-relaxed">
                     <ReactMarkdown>{mod.content}</ReactMarkdown>
                   </div>
+                  <ModuleMedia mod={mod} />
                   <Button
                     onClick={() => toggleComplete(mod.id)}
                     variant={isComplete ? "ghost" : "default"}

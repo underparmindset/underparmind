@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Star, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, X, Check, Link2, Video, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = ["Mindset", "Routine", "Focus", "Resilience", "Confidence", "Course Management"];
+
+const SOCIAL_PLATFORMS = ["Instagram", "TikTok", "YouTube", "X", "Facebook", "LinkedIn"];
 
 const EMPTY_FORM = {
   title: "",
@@ -19,6 +21,10 @@ const EMPTY_FORM = {
   week_label: "",
   is_featured: false,
   order: 0,
+  video_url: "",
+  article_url: "",
+  article_title: "",
+  social_links: [],
 };
 
 export default function GymEditor() {
@@ -53,8 +59,28 @@ export default function GymEditor() {
       week_label: mod.week_label || "",
       is_featured: mod.is_featured || false,
       order: mod.order || 0,
+      video_url: mod.video_url || "",
+      article_url: mod.article_url || "",
+      article_title: mod.article_title || "",
+      social_links: mod.social_links || [],
     });
     setEditing(mod.id);
+  };
+
+  const addSocialLink = () => {
+    setForm(f => ({ ...f, social_links: [...(f.social_links || []), { platform: "Instagram", url: "", label: "" }] }));
+  };
+
+  const updateSocialLink = (i, field, value) => {
+    setForm(f => {
+      const links = [...(f.social_links || [])];
+      links[i] = { ...links[i], [field]: value };
+      return { ...f, social_links: links };
+    });
+  };
+
+  const removeSocialLink = (i) => {
+    setForm(f => ({ ...f, social_links: (f.social_links || []).filter((_, idx) => idx !== i) }));
   };
 
   const handleSave = async () => {
@@ -147,6 +173,57 @@ export default function GymEditor() {
                 <Star className="w-4 h-4" /> {form.is_featured ? "Featured (This Week)" : "Mark as Featured"}
               </button>
             </div>
+          </div>
+
+          {/* Video */}
+          <div className="space-y-3 pt-2 border-t border-border">
+            <p className="text-sm font-semibold flex items-center gap-2"><Video className="w-4 h-4 text-primary" /> Video</p>
+            <div>
+              <label className="text-xs font-medium mb-1 block text-muted-foreground">Video URL (YouTube, Vimeo, or direct .mp4)</label>
+              <Input value={form.video_url} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))} placeholder="https://youtube.com/watch?v=..." />
+            </div>
+          </div>
+
+          {/* Article */}
+          <div className="space-y-3 pt-2 border-t border-border">
+            <p className="text-sm font-semibold flex items-center gap-2"><Link2 className="w-4 h-4 text-primary" /> Article</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs font-medium mb-1 block text-muted-foreground">Article URL</label>
+                <Input value={form.article_url} onChange={e => setForm(f => ({ ...f, article_url: e.target.value }))} placeholder="https://example.com/article" />
+              </div>
+              <div>
+                <label className="text-xs font-medium mb-1 block text-muted-foreground">Article Title (optional)</label>
+                <Input value={form.article_title} onChange={e => setForm(f => ({ ...f, article_title: e.target.value }))} placeholder="e.g. The Mental Side of Golf" />
+              </div>
+            </div>
+          </div>
+
+          {/* Social Links */}
+          <div className="space-y-3 pt-2 border-t border-border">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold flex items-center gap-2"><Share2 className="w-4 h-4 text-primary" /> Social Media Links</p>
+              <Button type="button" variant="ghost" size="sm" onClick={addSocialLink}><Plus className="w-4 h-4 mr-1" /> Add</Button>
+            </div>
+            {(form.social_links || []).map((link, i) => (
+              <div key={i} className="grid grid-cols-3 gap-2 items-center">
+                <select
+                  value={link.platform}
+                  onChange={e => updateSocialLink(i, "platform", e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  {SOCIAL_PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+                <Input value={link.url} onChange={e => updateSocialLink(i, "url", e.target.value)} placeholder="https://..." />
+                <div className="flex gap-1">
+                  <Input value={link.label} onChange={e => updateSocialLink(i, "label", e.target.value)} placeholder="Label (optional)" />
+                  <button onClick={() => removeSocialLink(i)} className="text-muted-foreground hover:text-destructive p-1"><X className="w-4 h-4" /></button>
+                </div>
+              </div>
+            ))}
+            {(form.social_links || []).length === 0 && (
+              <p className="text-xs text-muted-foreground italic">No social links added yet.</p>
+            )}
           </div>
 
           <div>
