@@ -54,20 +54,11 @@ export default function ModuleMedia({ mod }) {
                 title="Module video"
               />
             </div>
-          ) : isDirect ? (
-            <video controls className="w-full rounded-lg max-h-64 bg-black">
+          ) : (
+            <video controls className="w-full rounded-lg bg-black" style={{ maxHeight: "360px" }}>
               <source src={mod.video_url} />
               Your browser does not support video playback.
             </video>
-          ) : (
-            <a
-              href={mod.video_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-            >
-              <ExternalLink className="w-4 h-4" /> Watch Video
-            </a>
           )}
         </div>
       )}

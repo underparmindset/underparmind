@@ -2,7 +2,7 @@ import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Check, AlertTriangle, Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Check, AlertTriangle, Star, PlayCircle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -133,6 +133,11 @@ export default function MentalGym() {
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground mt-0.5">{mod.summary}</p>
+                  {mod.video_url && !isOpen && (
+                    <span className="inline-flex items-center gap-1 text-[11px] text-primary font-medium mt-1.5">
+                      <PlayCircle className="w-3.5 h-3.5" /> Video included
+                    </span>
+                  )}
                 </div>
                 {isOpen ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
               </button>
