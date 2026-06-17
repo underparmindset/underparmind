@@ -18,9 +18,12 @@ const PLATFORM_COLORS = {
 
 function getEmbedUrl(url) {
   if (!url) return null;
-  // YouTube
+  // YouTube standard & short links
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
   if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+  // YouTube Shorts
+  const ytShortsMatch = url.match(/youtube\.com\/shorts\/([^&?/]+)/);
+  if (ytShortsMatch) return `https://www.youtube.com/embed/${ytShortsMatch[1]}`;
   // Vimeo
   const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
   if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
@@ -45,7 +48,7 @@ export default function ModuleMedia({ mod }) {
         <div>
           <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Video</p>
           {embedUrl ? (
-            <div className="relative rounded-lg overflow-hidden max-w-xl" style={{ paddingBottom: "min(56.25%, 360px)", height: 0 }}>
+            <div className="relative rounded-lg overflow-hidden max-w-xl" style={{ aspectRatio: "16/9" }}>
               <iframe
                 src={embedUrl}
                 className="absolute inset-0 w-full h-full"
