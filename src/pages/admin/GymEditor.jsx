@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Star, X, Check, Link2, Video, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import VideoInput from "@/components/gym/VideoInput";
 
 const CATEGORIES = ["Mindset", "Routine", "Focus", "Resilience", "Confidence", "Course Management"];
 
@@ -175,55 +176,51 @@ export default function GymEditor() {
             </div>
           </div>
 
-          {/* Video */}
-          <div className="space-y-3 pt-2 border-t border-border">
-            <p className="text-sm font-semibold flex items-center gap-2"><Video className="w-4 h-4 text-primary" /> Video</p>
-            <div>
-              <label className="text-xs font-medium mb-1 block text-muted-foreground">Video URL (YouTube, Vimeo, or direct .mp4)</label>
-              <Input value={form.video_url} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))} placeholder="https://youtube.com/watch?v=..." />
+          {/* ── Media Section ── */}
+          <div className="border border-border rounded-xl overflow-hidden">
+            <div className="bg-muted/40 px-4 py-2.5 border-b border-border">
+              <p className="text-sm font-semibold text-foreground">Media &amp; Links <span className="text-xs font-normal text-muted-foreground ml-1">— all optional</span></p>
             </div>
-          </div>
 
-          {/* Article */}
-          <div className="space-y-3 pt-2 border-t border-border">
-            <p className="text-sm font-semibold flex items-center gap-2"><Link2 className="w-4 h-4 text-primary" /> Article</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-medium mb-1 block text-muted-foreground">Article URL</label>
+            {/* Video */}
+            <div className="p-4 space-y-2 border-b border-border">
+              <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5"><Video className="w-3.5 h-3.5" /> Video</label>
+              <VideoInput value={form.video_url} onChange={url => setForm(f => ({ ...f, video_url: url }))} />
+            </div>
+
+            {/* Article */}
+            <div className="p-4 space-y-2 border-b border-border">
+              <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5"><Link2 className="w-3.5 h-3.5" /> Article Link</label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Input value={form.article_url} onChange={e => setForm(f => ({ ...f, article_url: e.target.value }))} placeholder="https://example.com/article" />
-              </div>
-              <div>
-                <label className="text-xs font-medium mb-1 block text-muted-foreground">Article Title (optional)</label>
-                <Input value={form.article_title} onChange={e => setForm(f => ({ ...f, article_title: e.target.value }))} placeholder="e.g. The Mental Side of Golf" />
+                <Input value={form.article_title} onChange={e => setForm(f => ({ ...f, article_title: e.target.value }))} placeholder="Display title (optional)" />
               </div>
             </div>
-          </div>
 
-          {/* Social Links */}
-          <div className="space-y-3 pt-2 border-t border-border">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold flex items-center gap-2"><Share2 className="w-4 h-4 text-primary" /> Social Media Links</p>
-              <Button type="button" variant="ghost" size="sm" onClick={addSocialLink}><Plus className="w-4 h-4 mr-1" /> Add</Button>
-            </div>
-            {(form.social_links || []).map((link, i) => (
-              <div key={i} className="grid grid-cols-3 gap-2 items-center">
-                <select
-                  value={link.platform}
-                  onChange={e => updateSocialLink(i, "platform", e.target.value)}
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                >
-                  {SOCIAL_PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-                <Input value={link.url} onChange={e => updateSocialLink(i, "url", e.target.value)} placeholder="https://..." />
-                <div className="flex gap-1">
-                  <Input value={link.label} onChange={e => updateSocialLink(i, "label", e.target.value)} placeholder="Label (optional)" />
-                  <button onClick={() => removeSocialLink(i)} className="text-muted-foreground hover:text-destructive p-1"><X className="w-4 h-4" /></button>
-                </div>
+            {/* Social Links */}
+            <div className="p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground flex items-center gap-1.5"><Share2 className="w-3.5 h-3.5" /> Social Media Links</label>
+                <Button type="button" variant="ghost" size="sm" onClick={addSocialLink} className="h-7 text-xs"><Plus className="w-3 h-3 mr-1" /> Add Link</Button>
               </div>
-            ))}
-            {(form.social_links || []).length === 0 && (
-              <p className="text-xs text-muted-foreground italic">No social links added yet.</p>
-            )}
+              {(form.social_links || []).length === 0 && (
+                <p className="text-xs text-muted-foreground italic">No social links yet — add Instagram, TikTok, YouTube posts etc.</p>
+              )}
+              {(form.social_links || []).map((link, i) => (
+                <div key={i} className="flex gap-2 items-center">
+                  <select
+                    value={link.platform}
+                    onChange={e => updateSocialLink(i, "platform", e.target.value)}
+                    className="flex h-9 w-32 shrink-0 rounded-md border border-input bg-transparent px-2 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    {SOCIAL_PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                  <Input value={link.url} onChange={e => updateSocialLink(i, "url", e.target.value)} placeholder="URL" className="flex-1" />
+                  <Input value={link.label} onChange={e => updateSocialLink(i, "label", e.target.value)} placeholder="Label" className="w-28 shrink-0" />
+                  <button type="button" onClick={() => removeSocialLink(i)} className="text-muted-foreground hover:text-destructive p-1 shrink-0"><X className="w-4 h-4" /></button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div>
