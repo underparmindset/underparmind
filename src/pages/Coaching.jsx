@@ -61,8 +61,8 @@ export default function Coaching() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-display font-bold">Coaching</h1>
-        <p className="text-muted-foreground text-sm mt-1">Take your mental game to the next level</p>
+        <h1 className="text-2xl md:text-3xl font-display font-bold">Mental Performance Coaching</h1>
+        <p className="text-muted-foreground text-sm mt-1">From stuck to unstoppable: change your mindset</p>
       </div>
 
       {error && (
