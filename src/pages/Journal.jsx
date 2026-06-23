@@ -22,6 +22,22 @@ export default function Journal() {
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
+
+  const startEdit = (entry) => {
+    setEditingId(entry.id);
+    setEditingText(entry.entry_text || "");
+  };
+
+  const saveEdit = async (entry) => {
+    if (!editingText.trim()) return;
+    await base44.entities.JournalEntry.update(entry.id, { entry_text: editingText.trim() });
+    queryClient.invalidateQueries({ queryKey: ["journals"] });
+    toast.success("Past entry updated ✍️");
+    setEditingId(null);
+  };
+
   useEffect(() => {
     if (todayEntry) setText(todayEntry.entry_text || "");
   }, [todayEntry]);
@@ -103,12 +119,32 @@ export default function Journal() {
               <div key={entry.id} className="bg-card rounded-xl border border-border p-4">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-primary">{format(new Date(entry.entry_date), "MMM d, yyyy")}</span>
-                  <PenLine className="w-3.5 h-3.5 text-muted-foreground" />
+                  {editingId !== entry.id && (
+                    <button onClick={() => startEdit(entry)} className="p-1 hover:bg-muted rounded-md transition-colors" title="Edit entry">
+                      <PenLine className="w-3.5 h-3.5 text-muted-foreground" />
+                    </button>
+                  )}
                 </div>
                 {entry.prompt && <p className="text-[11px] text-accent font-medium mb-1 italic">{entry.prompt}</p>}
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {entry.entry_text?.length > 90 ? entry.entry_text.slice(0, 90) + "..." : entry.entry_text}
-                </p>
+                
+                {editingId === entry.id ? (
+                  <div className="mt-3 space-y-2">
+                    <Textarea 
+                      value={editingText}
+                      onChange={(e) => setEditingText(e.target.value)}
+                      rows={5}
+                      className="text-sm leading-relaxed"
+                    />
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" onClick={() => saveEdit(entry)} className="h-8">Save</Button>
+                      <Button size="sm" variant="ghost" onClick={() => setEditingId(null)} className="h-8">Cancel</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                    {entry.entry_text}
+                  </p>
+                )}
               </div>
             ))}
           </div>
