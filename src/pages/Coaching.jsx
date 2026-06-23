@@ -7,18 +7,21 @@ const SESSIONS = [
   {
     name: "Mental Coaching",
     duration: "60 Minutes",
+    price: "$99",
     description: "Private one-on-one coaching tailored to your junior golfer's mental game.",
     highlight: true,
   },
   {
     name: "Tournament Strategy Session",
     duration: "60 Minutes",
+    price: "$99",
     description: "We'll discuss the best tournaments for your junior to play, how to gain rankings, and earn points in tournaments that matter.",
     highlight: false,
   },
   {
     name: "Parent Coaching",
     duration: null,
+    price: "$99",
     description: "How to be the best advocate for your junior golfer. Best practices for encouraging and helping your junior golfer through the process.",
     highlight: false,
   },
@@ -73,8 +76,12 @@ export default function Coaching() {
                 </span>
               )}
               <h3 className="font-display font-bold text-lg">{session.name}</h3>
+              <div className="mt-2 mb-1">
+                <span className="text-2xl font-display font-bold">{session.price}</span>
+                <span className="text-muted-foreground text-sm"> /session</span>
+              </div>
               {session.duration && (
-                <span className="inline-block mt-2 text-xs font-semibold bg-accent/15 text-accent px-2.5 py-0.5 rounded-full self-start">
+                <span className="inline-block text-xs font-semibold bg-accent/15 text-accent px-2.5 py-0.5 rounded-full self-start">
                   {session.duration}
                 </span>
               )}
