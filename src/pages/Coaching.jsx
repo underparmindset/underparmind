@@ -48,7 +48,7 @@ export default function Coaching() {
           <h2 className="font-display font-bold text-xl">UnderParMind Coaching</h2>
           <p className="text-sm text-muted-foreground mt-1">
             Certified mental performance coach specializing in junior golfers.
-            Helping players aged 10–22 build the mental habits that win tournaments.
+            Helping players aged 13 and up build the mental habits that win tournaments.
           </p>
           <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start">
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-primary/10 text-primary">Mental Performance</span>
