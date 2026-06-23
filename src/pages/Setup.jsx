@@ -25,6 +25,7 @@ export default function Setup() {
   const navigate = useNavigate();
   const [role, setRole] = useState("player");
   const [firstName, setFirstName] = useState("");
+  const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
   const [coachingGoal, setCoachingGoal] = useState("");
   const [saving, setSaving] = useState(false);
@@ -35,11 +36,12 @@ export default function Setup() {
     await base44.auth.updateMe({
       role,
       first_name: firstName.trim(),
+      phone: phone.trim() || null,
       age: role === "player" && age ? parseInt(age) : null,
       coaching_goal: role === "player" ? coachingGoal : null,
       onboarded: true,
     });
-    navigate(role === "player" ? "/" : "/roster");
+    navigate(role === "player" ? "/pricing" : "/roster");
   };
 
   return (
@@ -93,6 +95,18 @@ export default function Setup() {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone number *</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="(555) 123-4567"
+              className="h-11"
+            />
+          </div>
+
           {role === "player" && (
             <>
               <div className="space-y-2">
@@ -127,7 +141,7 @@ export default function Setup() {
 
           <Button
             onClick={handleSubmit}
-            disabled={!firstName.trim() || saving}
+            disabled={!firstName.trim() || !phone.trim() || saving}
             className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90"
           >
             {saving ? "Setting up..." : role === "player" ? "Let's get to work" : "View my players"}

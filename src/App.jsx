@@ -19,6 +19,7 @@ import Coaching from '@/pages/Coaching';
 import Roster from '@/pages/parent-coach/Roster';
 import PlayerDashboard from '@/pages/parent-coach/PlayerDashboard';
 import GymEditor from '@/pages/admin/GymEditor';
+import Pricing from '@/pages/Pricing';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/setup" element={<Setup />} />
+      <Route path="/pricing" element={<Pricing />} />
       {/* Player routes */}
       <Route element={<Layout />}>
         <Route path="/" element={<Dashboard />} />

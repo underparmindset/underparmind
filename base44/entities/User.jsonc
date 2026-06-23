@@ -17,6 +17,10 @@
     "age": {
       "type": "number"
     },
+    "phone": {
+      "type": "string",
+      "description": "User phone number"
+    },
     "coaching_goal": {
       "type": "string"
     },
@@ -29,6 +33,31 @@
     "onboarded": {
       "type": "boolean",
       "default": false
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "inactive",
+        "active",
+        "cancelled",
+        "past_due"
+      ],
+      "default": "inactive"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "monthly",
+        "quarterly",
+        "annual"
+      ]
+    },
+    "stripe_customer_id": {
+      "type": "string"
+    },
+    "subscription_end_date": {
+      "type": "string",
+      "format": "date"
     }
   }
 }
