@@ -3,26 +3,23 @@ import { User, Mail, Check } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-const PLANS = [
+const SESSIONS = [
   {
-    name: "Train",
-    price: "$19",
-    period: "/mo",
-    features: ["Mental Gym access", "Daily Focus tools", "Performance journal", "Dashboard analytics"],
-    highlight: false,
-  },
-  {
-    name: "Compete",
-    price: "$79",
-    period: "/mo",
-    features: ["Everything in Train", "2 coaching sessions/month", "Personalized insights", "Goal review calls", "Priority support"],
+    name: "Mental Coaching",
+    duration: "60 Minutes",
+    description: "Private one-on-one coaching tailored to your junior golfer's mental game.",
     highlight: true,
   },
   {
-    name: "Tour Track",
-    price: "$249",
-    period: "/mo",
-    features: ["Everything in Compete", "Weekly 1-on-1 sessions", "Tournament prep plans", "Parent/coach dashboards", "Direct coach access"],
+    name: "Tournament Strategy Session",
+    duration: "60 Minutes",
+    description: "We'll discuss the best tournaments for your junior to play, how to gain rankings, and earn points in tournaments that matter.",
+    highlight: false,
+  },
+  {
+    name: "Parent Coaching",
+    duration: null,
+    description: "How to be the best advocate for your junior golfer. Best practices for encouraging and helping your junior golfer through the process.",
     highlight: false,
   },
 ];
@@ -61,39 +58,33 @@ export default function Coaching() {
         </Button>
       </div>
 
-      {/* Pricing */}
+      {/* Coaching Sessions */}
       <div>
-        <h2 className="font-display font-bold text-xl mb-4 text-center">Plans</h2>
+        <h2 className="font-display font-bold text-xl mb-4 text-center">Coaching Options</h2>
         <div className="grid md:grid-cols-3 gap-4">
-          {PLANS.map((plan) => (
-            <div key={plan.name} className={cn(
+          {SESSIONS.map((session) => (
+            <div key={session.name} className={cn(
               "bg-card rounded-xl border p-6 flex flex-col",
-              plan.highlight ? "border-primary shadow-lg ring-2 ring-primary/10" : "border-border"
+              session.highlight ? "border-primary shadow-lg ring-2 ring-primary/10" : "border-border"
             )}>
-              {plan.highlight && (
+              {session.highlight && (
                 <span className="text-[10px] font-bold uppercase bg-primary text-primary-foreground px-3 py-1 rounded-full self-start mb-3">
                   Most Popular
                 </span>
               )}
-              <h3 className="font-display font-bold text-lg">{plan.name}</h3>
-              <div className="mt-2 mb-4">
-                <span className="text-3xl font-display font-bold">{plan.price}</span>
-                <span className="text-muted-foreground text-sm">{plan.period}</span>
-              </div>
-              <ul className="space-y-2 flex-1">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm">
-                    <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
+              <h3 className="font-display font-bold text-lg">{session.name}</h3>
+              {session.duration && (
+                <span className="inline-block mt-2 text-xs font-semibold bg-accent/15 text-accent px-2.5 py-0.5 rounded-full self-start">
+                  {session.duration}
+                </span>
+              )}
+              <p className="text-sm text-muted-foreground mt-3 flex-1">{session.description}</p>
               <Button
-                variant={plan.highlight ? "default" : "outline"}
-                className={cn("mt-6 w-full", plan.highlight && "bg-primary hover:bg-primary/90")}
+                variant={session.highlight ? "default" : "outline"}
+                className={cn("mt-6 w-full", session.highlight && "bg-primary hover:bg-primary/90")}
                 onClick={requestSession}
               >
-                Get Started
+                Request a Session
               </Button>
             </div>
           ))}
