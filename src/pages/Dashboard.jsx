@@ -8,8 +8,8 @@ import StatCard from "@/components/dashboard/StatCard";
 import MPSRing from "@/components/dashboard/MPSRing";
 import InsightCard from "@/components/dashboard/InsightCard";
 import ChecklistItem from "@/components/dashboard/ChecklistItem";
-
-import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges } from "@/lib/calculations";
+import BounceBackCard from "@/components/dashboard/BounceBackCard";
+import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges, calculateBounceBack } from "@/lib/calculations";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -65,6 +65,7 @@ export default function Dashboard() {
   const focusStreak = calculateFocusStreak(focusReports);
   const insights = generateInsights(rounds);
   const badges = calculateBadges(rounds, focusStreak, goals);
+  const bounceBack = calculateBounceBack(rounds);
 
   // Chart data
   const filteredRounds = chartFilter === "All" ? rounds
@@ -106,6 +107,9 @@ export default function Dashboard() {
         <StatCard label="Avg Putts" value={avgPutts} subtitle="per round" />
         <StatCard label="MPS" value={mps} variant="accent" subtitle="/ 100" />
       </div>
+
+      {/* Bounce Back */}
+      <BounceBackCard bounceBack={bounceBack} />
 
       <div className="grid md:grid-cols-3 gap-6">
         {/* Scoring trend */}

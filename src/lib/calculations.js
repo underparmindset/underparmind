@@ -92,6 +92,39 @@ export function generateInsights(rounds) {
   return insights.slice(0, 3);
 }
 
+// Bounce Back: recovery from bogey-or-worse with par-or-better on the next hole
+export function calculateBounceBack(rounds) {
+  let bounceBacks = 0;
+  let opportunities = 0;
+
+  rounds.forEach(round => {
+    const scores = round.hole_scores || [];
+    const pars = round.hole_pars || [];
+    if (!scores.length || !pars.length) return;
+
+    for (let i = 0; i < scores.length - 1; i++) {
+      const curScore = scores[i];
+      const curPar = pars[i];
+      const nextScore = scores[i + 1];
+      const nextPar = pars[i + 1];
+      if (curScore == null || curPar == null || nextScore == null || nextPar == null) continue;
+      if (curScore === 0) continue; // skip unplayed holes
+
+      // Bogey or worse on current hole = bounce-back opportunity
+      if (curScore > curPar) {
+        opportunities++;
+        // Par or better on next hole = successful bounce back
+        if (nextScore <= nextPar) {
+          bounceBacks++;
+        }
+      }
+    }
+  });
+
+  const percentage = opportunities > 0 ? Math.round((bounceBacks / opportunities) * 100) : null;
+  return { bounceBacks, opportunities, percentage };
+}
+
 // Badge rules
 export function calculateBadges(rounds, focusStreak, goals) {
   const badges = [];
