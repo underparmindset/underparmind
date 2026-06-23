@@ -38,11 +38,24 @@ export default function DailyFocus() {
   const [whyWin, setWhyWin] = useState("");
   const [reportId, setReportId] = useState(null);
 
+  const [taskTexts, setTaskTexts] = useState({});
+
   const { data: tasks = [], refetch: refetchTasks } = useQuery({
     queryKey: ["focusTasks", reportId],
     queryFn: () => reportId ? base44.entities.FocusTask.filter({ focus_report_id: reportId }) : [],
     enabled: !!reportId
   });
+
+  // Sync taskTexts from server when tasks load (only for tasks not being edited)
+  useEffect(() => {
+    setTaskTexts((prev) => {
+      const next = { ...prev };
+      tasks.forEach((t) => {
+        if (!(t.id in next)) next[t.id] = t.task_text;
+      });
+      return next;
+    });
+  }, [tasks]);
 
   // Initialize or load report
   useEffect(() => {
@@ -138,17 +151,25 @@ export default function DailyFocus() {
     refetchTasks();
   };
 
-  const updateTask = async (task, newText) => {
-    await base44.entities.FocusTask.update(task.id, { task_text: newText });
-    refetchTasks();
+  const debouncedSaveTask = useCallback(
+    debounce(async (taskId, text) => {
+      await base44.entities.FocusTask.update(taskId, { task_text: text });
+    }, 600),
+    []
+  );
+
+  const updateTask = (task, newText) => {
+    setTaskTexts((prev) => ({ ...prev, [task.id]: newText }));
+    debouncedSaveTask(task.id, newText);
   };
 
   const deleteTask = async (taskId) => {
+    setTaskTexts((prev) => { const next = { ...prev }; delete next[taskId]; return next; });
     await base44.entities.FocusTask.delete(taskId);
     refetchTasks();
   };
 
-  const filledTasks = tasks.filter((t) => t.task_text?.trim());
+  const filledTasks = tasks.filter((t) => taskTexts[t.id]?.trim());
   const filledGratitude = gratitude.filter((g) => g?.trim());
   const filledAffirmations = affirmations.filter((a) => a?.trim());
 
@@ -169,6 +190,8 @@ export default function DailyFocus() {
       toast.error("Fill in why you will win today");
       return;
     }
+    // Flush any pending task saves before submitting
+    debouncedSaveTask.flush();
     await base44.entities.FocusReport.update(reportId, {
       affirmation_1: affirmations[0] || "",
       affirmation_2: affirmations[1] || "",
@@ -269,7 +292,7 @@ export default function DailyFocus() {
         <div key={task.id} className="flex items-center gap-3">
             <span className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-sm flex items-center justify-center flex-shrink-0">{i + 1}</span>
             <Input
-            value={task.task_text}
+            value={taskTexts[task.id] ?? ""}
             onChange={(e) => updateTask(task, e.target.value)}
             placeholder="Enter priority..."
             disabled={isSubmitted}
