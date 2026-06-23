@@ -191,7 +191,7 @@ export default function Dashboard() {
           <div className="bg-card rounded-xl border border-border divide-y divide-border">
             <ChecklistItem label="Daily Focus Report" done={!!todayFocus?.submitted} linkTo="/focus" />
             <ChecklistItem label={`Goals — ${goals.filter(g => g.status === "open").length} open`} done={false} linkTo="/goals" />
-            <ChecklistItem label="Log a round" done={false} linkTo="/log-round" />
+
             <ChecklistItem label="Journal entry" done={!!todayJournal} linkTo="/journal" />
           </div>
         </div>
