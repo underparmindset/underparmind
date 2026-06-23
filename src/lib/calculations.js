@@ -125,6 +125,32 @@ export function calculateBounceBack(rounds) {
   return { bounceBacks, opportunities, percentage };
 }
 
+// Average score by par (3, 4, 5) across all rounds with hole-by-hole data
+export function calculateParAverages(rounds) {
+  const sums = { 3: 0, 4: 0, 5: 0 };
+  const counts = { 3: 0, 4: 0, 5: 0 };
+
+  rounds.forEach(round => {
+    const scores = round.hole_scores || [];
+    const pars = round.hole_pars || [];
+    const len = Math.min(scores.length, pars.length);
+    for (let i = 0; i < len; i++) {
+      const par = pars[i];
+      const score = scores[i];
+      if (par !== 3 && par !== 4 && par !== 5) continue;
+      if (score == null || score === 0) continue;
+      sums[par] += score;
+      counts[par]++;
+    }
+  });
+
+  return {
+    par3: counts[3] ? (sums[3] / counts[3]).toFixed(1) : null,
+    par4: counts[4] ? (sums[4] / counts[4]).toFixed(1) : null,
+    par5: counts[5] ? (sums[5] / counts[5]).toFixed(1) : null,
+  };
+}
+
 // Badge rules
 export function calculateBadges(rounds, focusStreak, goals) {
   const badges = [];

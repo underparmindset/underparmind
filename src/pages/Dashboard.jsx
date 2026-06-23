@@ -9,7 +9,7 @@ import MPSRing from "@/components/dashboard/MPSRing";
 import InsightCard from "@/components/dashboard/InsightCard";
 import ChecklistItem from "@/components/dashboard/ChecklistItem";
 import BounceBackCard from "@/components/dashboard/BounceBackCard";
-import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges, calculateBounceBack } from "@/lib/calculations";
+import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges, calculateBounceBack, calculateParAverages } from "@/lib/calculations";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -66,6 +66,7 @@ export default function Dashboard() {
   const insights = generateInsights(rounds);
   const badges = calculateBadges(rounds, focusStreak, goals);
   const bounceBack = calculateBounceBack(rounds);
+  const parAverages = calculateParAverages(rounds);
 
   // Chart data
   const filteredRounds = chartFilter === "All" ? rounds
@@ -106,6 +107,13 @@ export default function Dashboard() {
         <StatCard label="Fairways Hit" value={avgFir} subtitle="avg" />
         <StatCard label="Avg Putts" value={avgPutts} subtitle="per round" />
         <StatCard label="MPS" value={mps} variant="accent" subtitle="/ 100" />
+      </div>
+
+      {/* Row 3: Par averages */}
+      <div className="grid grid-cols-3 gap-3">
+        <StatCard label="Par 3 Avg" value={parAverages.par3 ?? "—"} subtitle="avg score" />
+        <StatCard label="Par 4 Avg" value={parAverages.par4 ?? "—"} subtitle="avg score" />
+        <StatCard label="Par 5 Avg" value={parAverages.par5 ?? "—"} subtitle="avg score" />
       </div>
 
       {/* Bounce Back */}
