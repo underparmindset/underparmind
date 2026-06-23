@@ -20,7 +20,7 @@ const SESSIONS = [
     name: "Tournament Strategy Session",
     duration: "60 Minutes",
     price: "$99",
-    description: "We'll discuss the best tournaments for your junior to play, how to gain rankings, and earn points in tournaments that matter.",
+    description: "Learn how to select the right tournaments, boost your junior's ranking, and maximize their points.",
     highlight: false,
   },
   {
