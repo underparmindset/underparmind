@@ -1,10 +1,14 @@
+import { useState } from "react";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Check } from "lucide-react";
-import { toast } from "sonner";
+import { User, Mail, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const COACHING_PRICE_ID = "price_1TlcpiDAmkJ2t1TLxnJ2w4wY";
 
 const SESSIONS = [
   {
+    id: "mental-coaching",
     name: "Mental Coaching",
     duration: "60 Minutes",
     price: "$99",
@@ -12,6 +16,7 @@ const SESSIONS = [
     highlight: true,
   },
   {
+    id: "tournament-strategy",
     name: "Tournament Strategy Session",
     duration: "60 Minutes",
     price: "$99",
@@ -19,6 +24,7 @@ const SESSIONS = [
     highlight: false,
   },
   {
+    id: "parent-coaching",
     name: "Parent Coaching",
     duration: "60 Minutes",
     price: "$99",
@@ -28,8 +34,28 @@ const SESSIONS = [
 ];
 
 export default function Coaching() {
-  const requestSession = () => {
-    toast.success("Session request sent! We'll be in touch shortly.");
+  const [loadingSession, setLoadingSession] = useState(null);
+  const [error, setError] = useState("");
+  const inIframe = window.self !== window.top;
+
+  const handleCheckout = async (session) => {
+    if (inIframe) {
+      setError("Checkout only works from the published app. Please open the app in a new tab to book a session.");
+      return;
+    }
+    setError("");
+    setLoadingSession(session.id);
+    try {
+      const response = await base44.functions.invoke("createCheckoutSession", {
+        priceId: COACHING_PRICE_ID,
+        tier: session.name,
+        mode: "payment",
+      });
+      window.location.href = response.data.url;
+    } catch (err) {
+      setError(err.message || "Failed to start checkout. Please try again.");
+      setLoadingSession(null);
+    }
   };
 
   return (
@@ -38,6 +64,13 @@ export default function Coaching() {
         <h1 className="text-2xl md:text-3xl font-display font-bold">Coaching</h1>
         <p className="text-muted-foreground text-sm mt-1">Take your mental game to the next level</p>
       </div>
+
+      {error && (
+        <div className="p-4 rounded-xl bg-destructive/15 border border-destructive/30 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-destructive-foreground">{error}</p>
+        </div>
+      )}
 
       {/* Coach profile */}
       <div className="bg-card rounded-xl border border-border p-6 flex flex-col md:flex-row items-center gap-6">
@@ -56,8 +89,8 @@ export default function Coaching() {
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-700">Tournament Prep</span>
           </div>
         </div>
-        <Button onClick={requestSession} className="bg-primary hover:bg-primary/90 flex-shrink-0">
-          <Mail className="w-4 h-4 mr-1.5" /> Request a Session
+        <Button onClick={() => handleCheckout(SESSIONS[0])} disabled={loadingSession !== null} className="bg-primary hover:bg-primary/90 flex-shrink-0">
+          <Mail className="w-4 h-4 mr-1.5" /> Book a Session
         </Button>
       </div>
 
@@ -89,9 +122,17 @@ export default function Coaching() {
               <Button
                 variant={session.highlight ? "default" : "outline"}
                 className={cn("mt-6 w-full", session.highlight && "bg-primary hover:bg-primary/90")}
-                onClick={requestSession}
+                onClick={() => handleCheckout(session)}
+                disabled={loadingSession !== null}
               >
-                Request a Session
+                {loadingSession === session.id ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Redirecting...
+                  </>
+                ) : (
+                  "Book This Session"
+                )}
               </Button>
             </div>
           ))}
