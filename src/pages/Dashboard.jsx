@@ -193,6 +193,7 @@ export default function Dashboard() {
             <ChecklistItem label={`Goals — ${goals.filter(g => g.status === "open").length} open`} done={false} linkTo="/goals" />
 
             <ChecklistItem label="Journal entry" done={!!todayJournal} linkTo="/journal" />
+            <ChecklistItem label="Mental Gym" done={false} linkTo="/mental-gym" />
           </div>
         </div>
       </div>
