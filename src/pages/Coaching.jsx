@@ -103,11 +103,6 @@ export default function Coaching() {
               "bg-card rounded-xl border p-6 flex flex-col",
               session.highlight ? "border-primary shadow-lg ring-2 ring-primary/10" : "border-border"
             )}>
-              {session.highlight && (
-                <span className="text-[10px] font-bold uppercase bg-primary text-primary-foreground px-3 py-1 rounded-full self-start mb-3">
-                  Most Popular
-                </span>
-              )}
               <h3 className="font-display font-bold text-lg">{session.name}</h3>
               <div className="mt-2 mb-1">
                 <span className="text-2xl font-display font-bold">{session.price}</span>
