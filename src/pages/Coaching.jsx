@@ -20,7 +20,7 @@ const SESSIONS = [
   },
   {
     name: "Parent Coaching",
-    duration: null,
+    duration: "60 Minutes",
     price: "$99",
     description: "How to be the best advocate for your junior golfer. Best practices for encouraging and helping your junior golfer through the process.",
     highlight: false,
