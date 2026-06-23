@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, 
 import StatCard from "@/components/dashboard/StatCard";
 import MPSRing from "@/components/dashboard/MPSRing";
 import InsightCard from "@/components/dashboard/InsightCard";
+import ChecklistItem from "@/components/dashboard/ChecklistItem";
 
 import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges } from "@/lib/calculations";
 import { cn } from "@/lib/utils";
@@ -184,6 +185,16 @@ export default function Dashboard() {
           )}
         </div>
 
+        {/* Today's Checklist */}
+        <div>
+          <h2 className="font-display font-bold text-lg mb-3">Today's Checklist</h2>
+          <div className="bg-card rounded-xl border border-border divide-y divide-border">
+            <ChecklistItem label="Daily Focus Report" done={!!todayFocus?.submitted} linkTo="/focus" />
+            <ChecklistItem label={`Goals — ${goals.filter(g => g.status === "open").length} open`} done={false} linkTo="/goals" />
+            <ChecklistItem label="Log a round" done={false} linkTo="/log-round" />
+            <ChecklistItem label="Journal entry" done={!!todayJournal} linkTo="/journal" />
+          </div>
+        </div>
       </div>
 
       {/* Mental Stats Bars */}
