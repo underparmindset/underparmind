@@ -27,7 +27,9 @@ Deno.serve(async (req) => {
       mode: mode,
       line_items: [{ price: priceId, quantity: 1 }],
       ...(customerEmail ? { customer_email: customerEmail } : {}),
-      success_url: `${origin}/?checkout=success`,
+      success_url: mode === 'payment'
+        ? `${origin}/booking?checkout=success&session_id={CHECKOUT_SESSION_ID}&tier=${encodeURIComponent(tier || '')}`
+        : `${origin}/?checkout=success`,
       cancel_url: mode === 'payment' ? `${origin}/coaching?checkout=cancelled` : `${origin}/pricing?checkout=cancelled`,
       metadata: {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
