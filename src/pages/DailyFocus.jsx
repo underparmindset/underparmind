@@ -4,12 +4,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, Plus, Flame, Sparkles, X } from "lucide-react";
+import { Check, Plus, Flame, Sparkles, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { format, startOfWeek, addDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { calculateFocusStreak } from "@/lib/calculations";
 import { debounce } from "lodash";
+import PastReportDialog from "@/components/focus/PastReportDialog";
 
 const QUICK_AFFIRMATIONS = [
 "I trust my swing under pressure",
@@ -37,6 +38,8 @@ export default function DailyFocus() {
   const [gratitude, setGratitude] = useState(["", "", ""]);
   const [whyWin, setWhyWin] = useState("");
   const [reportId, setReportId] = useState(null);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [viewingReport, setViewingReport] = useState(null);
 
   const reportIdRef = useRef(null);
   useEffect(() => { reportIdRef.current = reportId; }, [reportId]);
@@ -213,7 +216,7 @@ export default function DailyFocus() {
   };
 
   // Week view
-  const weekStart = startOfWeek(new Date(), { weekStartsOn: 0 });
+  const weekStart = startOfWeek(addDays(new Date(), weekOffset * 7), { weekStartsOn: 0 });
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(weekStart, i);
     const dateStr = format(date, "yyyy-MM-dd");
@@ -385,32 +388,62 @@ export default function DailyFocus() {
         </div>
       }
 
-      {/* This Week */}
+      {/* Week view */}
       <div className="bg-card rounded-xl border border-border overflow-hidden">
-        <div className="p-5 border-b border-border">
-          <h2 className="font-display font-bold text-lg">This Week</h2>
+        <div className="p-5 border-b border-border flex items-center justify-between">
+          <button
+            onClick={() => setWeekOffset((w) => w - 1)}
+            className="p-1 rounded-lg hover:bg-muted transition-colors"
+            aria-label="Previous week"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className="font-display font-bold text-lg">
+            {weekOffset === 0 ? "This Week" : format(weekStart, "MMM d")}
+          </h2>
+          <button
+            onClick={() => setWeekOffset((w) => Math.min(0, w + 1))}
+            disabled={weekOffset >= 0}
+            className="p-1 rounded-lg hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Next week"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
         <div className="grid grid-cols-7 divide-x divide-border">
           {weekDays.map((d) => {
             const isDone = d.report?.submitted;
             const isToday = d.dateStr === today;
+            const hasReport = !!d.report;
             return (
-              <div key={d.dateStr} className={cn("p-3 text-center", isToday && "bg-primary/5")}>
+              <button
+                key={d.dateStr}
+                onClick={() => hasReport && setViewingReport(d.report)}
+                disabled={!hasReport}
+                className={cn(
+                  "p-3 text-center transition-colors",
+                  isToday && "bg-primary/5",
+                  hasReport && "hover:bg-primary/5 cursor-pointer",
+                  !hasReport && "cursor-default"
+                )}
+              >
                 <p className="text-[10px] font-semibold uppercase text-muted-foreground">{d.dayLabel}</p>
                 <div className={cn(
                   "w-6 h-6 rounded-full mx-auto mt-1.5 flex items-center justify-center",
-                  isDone ? "bg-primary" : d.report ? "bg-accent/20" : "bg-muted"
+                  isDone ? "bg-primary" : hasReport ? "bg-accent/20" : "bg-muted"
                 )}>
                   {isDone && <Check className="w-3 h-3 text-primary-foreground" />}
                 </div>
                 <p className="text-[9px] mt-1 text-muted-foreground">
-                  {isDone ? "Won" : d.report ? "Showed up" : "—"}
+                  {isDone ? "Won" : hasReport ? "Showed up" : "—"}
                 </p>
-              </div>);
-
+              </button>
+            );
           })}
         </div>
       </div>
+
+      <PastReportDialog report={viewingReport} onClose={() => setViewingReport(null)} />
     </div>);
 
 }
