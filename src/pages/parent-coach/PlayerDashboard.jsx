@@ -11,6 +11,8 @@ import {
 import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges } from "@/lib/calculations";
 import MPSRing from "@/components/dashboard/MPSRing";
 import InsightCard from "@/components/dashboard/InsightCard";
+import PlayerMentalGym from "@/components/parent-coach/PlayerMentalGym";
+import PlayerWinTheDay from "@/components/parent-coach/PlayerWinTheDay";
 import { cn } from "@/lib/utils";
 
 export default function PlayerDashboard() {
@@ -257,6 +259,12 @@ export default function PlayerDashboard() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Win The Day history & Mental Gym progress */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <PlayerWinTheDay reports={reports} />
+        <PlayerMentalGym playerId={playerId} />
       </div>
 
       {/* Recent rounds */}
