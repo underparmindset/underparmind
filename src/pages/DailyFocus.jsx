@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,9 @@ export default function DailyFocus() {
   const [gratitude, setGratitude] = useState(["", "", ""]);
   const [whyWin, setWhyWin] = useState("");
   const [reportId, setReportId] = useState(null);
+
+  const reportIdRef = useRef(null);
+  useEffect(() => { reportIdRef.current = reportId; }, [reportId]);
 
   const [taskTexts, setTaskTexts] = useState({});
 
@@ -79,8 +82,8 @@ export default function DailyFocus() {
 
   const debouncedSave = useCallback(
     debounce(async (affs, win, grats) => {
-      if (!reportId) return;
-      await base44.entities.FocusReport.update(reportId, {
+      if (!reportIdRef.current) return;
+      await base44.entities.FocusReport.update(reportIdRef.current, {
         affirmation_1: affs[0] || "",
         affirmation_2: affs[1] || "",
         affirmation_3: affs[2] || "",
@@ -92,7 +95,7 @@ export default function DailyFocus() {
         extra_gratitude: grats.slice(3).filter(Boolean)
       });
     }, 800),
-    [reportId]
+    [] // stable — reads reportId via ref
   );
 
   const updateAffirmation = (idx, val) => {
@@ -190,7 +193,8 @@ export default function DailyFocus() {
       toast.error("Fill in why you will win today");
       return;
     }
-    // Flush any pending task saves before submitting
+    // Flush any pending saves before submitting
+    debouncedSave.flush();
     debouncedSaveTask.flush();
     await base44.entities.FocusReport.update(reportId, {
       affirmation_1: affirmations[0] || "",
