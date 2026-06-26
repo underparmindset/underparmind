@@ -5,59 +5,33 @@
     "role": {
       "type": "string",
       "enum": [
+        "admin",
+        "user",
         "player",
         "parent",
         "coach"
       ],
-      "default": "player"
+      "default": "user"
     },
     "first_name": {
       "type": "string"
     },
+    "phone": {
+      "type": "string"
+    },
+    "date_of_birth": {
+      "type": "string",
+      "format": "date"
+    },
     "age": {
       "type": "number"
-    },
-    "phone": {
-      "type": "string",
-      "description": "User phone number"
     },
     "coaching_goal": {
       "type": "string"
     },
-    "ghin_number": {
-      "type": "string"
-    },
-    "handicap_index": {
-      "type": "number"
-    },
     "onboarded": {
       "type": "boolean",
       "default": false
-    },
-    "subscription_status": {
-      "type": "string",
-      "enum": [
-        "inactive",
-        "active",
-        "cancelled",
-        "past_due"
-      ],
-      "default": "inactive"
-    },
-    "subscription_tier": {
-      "type": "string",
-      "enum": [
-        "monthly",
-        "quarterly",
-        "annual"
-      ]
-    },
-    "stripe_customer_id": {
-      "type": "string"
-    },
-    "subscription_end_date": {
-      "type": "string",
-      "format": "date"
     }
   }
 }

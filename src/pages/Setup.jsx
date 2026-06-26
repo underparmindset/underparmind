@@ -26,6 +26,7 @@ export default function Setup() {
   const [role, setRole] = useState("player");
   const [firstName, setFirstName] = useState("");
   const [phone, setPhone] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [age, setAge] = useState("");
   const [coachingGoal, setCoachingGoal] = useState("");
   const [saving, setSaving] = useState(false);
@@ -37,6 +38,7 @@ export default function Setup() {
       role,
       first_name: firstName.trim(),
       phone: phone.trim() || null,
+      date_of_birth: dateOfBirth || null,
       age: role === "player" && age ? parseInt(age) : null,
       coaching_goal: role === "player" ? coachingGoal : null,
       onboarded: true,
@@ -107,6 +109,17 @@ export default function Setup() {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="dob">Date of birth *</Label>
+            <Input
+              id="dob"
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              className="h-11"
+            />
+          </div>
+
           {role === "player" && (
             <>
               <div className="space-y-2">
@@ -141,7 +154,7 @@ export default function Setup() {
 
           <Button
             onClick={handleSubmit}
-            disabled={!firstName.trim() || !phone.trim() || saving}
+            disabled={!firstName.trim() || !phone.trim() || !dateOfBirth || saving}
             className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90"
           >
             {saving ? "Setting up..." : role === "player" ? "Let's get to work" : "View my players"}
