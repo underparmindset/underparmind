@@ -55,10 +55,15 @@ export default function Register() {
       const result = await base44.auth.verifyOtp({ email, otpCode });
       if (result?.access_token) {
         base44.auth.setToken(result.access_token);
+      }
+      // Save phone/DOB — if it fails, still redirect to setup (user is authenticated)
+      try {
         await base44.auth.updateMe({
           phone: phone.trim(),
           date_of_birth: dateOfBirth,
         });
+      } catch (profileErr) {
+        console.warn("Profile save failed, continuing to setup:", profileErr);
       }
       window.location.href = "/setup";
     } catch (err) {

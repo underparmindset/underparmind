@@ -30,20 +30,27 @@ export default function Setup() {
   const [age, setAge] = useState("");
   const [coachingGoal, setCoachingGoal] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     if (!firstName.trim()) return;
     setSaving(true);
-    await base44.auth.updateMe({
-      role,
-      first_name: firstName.trim(),
-      phone: phone.trim() || null,
-      date_of_birth: dateOfBirth || null,
-      age: role === "player" && age ? parseInt(age) : null,
-      coaching_goal: role === "player" ? coachingGoal : null,
-      onboarded: true,
-    });
-    navigate(role === "player" ? "/pricing" : "/roster");
+    try {
+      await base44.auth.updateMe({
+        role,
+        first_name: firstName.trim(),
+        phone: phone.trim() || null,
+        date_of_birth: dateOfBirth || null,
+        age: role === "player" && age ? parseInt(age) : null,
+        coaching_goal: role === "player" ? coachingGoal : null,
+        onboarded: true,
+      });
+      navigate(role === "player" ? "/pricing" : "/roster");
+    } catch (err) {
+      setError(err.message || "Failed to save profile. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -58,6 +65,11 @@ export default function Setup() {
         </div>
 
         <div className="bg-card rounded-2xl p-6 space-y-5 shadow-xl">
+          {error && (
+            <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+              {error}
+            </div>
+          )}
           {/* Role selection */}
           <div className="space-y-2">
             <Label>I am a...</Label>
