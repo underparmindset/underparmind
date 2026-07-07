@@ -37,7 +37,7 @@ export default function Setup() {
     setSaving(true);
     try {
       await base44.auth.updateMe({
-        role,
+        user_type: role,
         first_name: firstName.trim(),
         phone: phone.trim() || null,
         date_of_birth: dateOfBirth || null,

@@ -21,7 +21,7 @@ export default function Dashboard() {
   useEffect(() => {
     base44.auth.me().then(u => {
       if (!u?.onboarded) navigate("/setup");
-      else if (u.role === "coach" || u.role === "parent") navigate("/roster");
+      else if (u.user_type === "coach" || u.user_type === "parent") navigate("/roster");
       else setUser(u);
     });
   }, []);

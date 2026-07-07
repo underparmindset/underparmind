@@ -2,19 +2,17 @@
   "name": "User",
   "type": "object",
   "properties": {
-    "role": {
+    "first_name": {
+      "type": "string"
+    },
+    "user_type": {
       "type": "string",
       "enum": [
-        "admin",
-        "user",
         "player",
         "parent",
         "coach"
       ],
-      "default": "user"
-    },
-    "first_name": {
-      "type": "string"
+      "default": "player"
     },
     "phone": {
       "type": "string"

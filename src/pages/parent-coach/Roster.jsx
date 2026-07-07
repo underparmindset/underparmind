@@ -29,7 +29,7 @@ export default function Roster() {
 
   // Only show player-role users (not self)
   const players = allUsers.filter(
-    (u) => (!u.role || u.role === "player") && u.id !== currentUser?.id
+    (u) => (!u.user_type || u.user_type === "player") && u.id !== currentUser?.id
   );
 
   // Per-player stats
