@@ -22,6 +22,10 @@ import Roster from '@/pages/parent-coach/Roster';
 import PlayerDashboard from '@/pages/parent-coach/PlayerDashboard';
 import GymEditor from '@/pages/admin/GymEditor';
 import Pricing from '@/pages/Pricing';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -49,6 +53,10 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/setup" element={<Setup />} />
       <Route path="/pricing" element={<Pricing />} />
       {/* Player routes */}
