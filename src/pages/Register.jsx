@@ -159,6 +159,10 @@ export default function Register() {
           <Link to="/login" className="text-primary font-medium hover:underline">
             Log in
           </Link>
+          <span className="mx-2">·</span>
+          <Link to="/pricing" className="text-primary font-medium hover:underline">
+            View plans
+          </Link>
         </>
       }
     >
