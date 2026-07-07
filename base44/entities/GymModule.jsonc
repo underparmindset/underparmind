@@ -8,7 +8,7 @@
     },
     "summary": {
       "type": "string",
-      "description": "Short summary shown in the card"
+      "description": "Short summary shown on the card"
     },
     "content": {
       "type": "string",
@@ -24,11 +24,23 @@
         "Confidence",
         "Course Management"
       ],
-      "description": "Module category"
+      "description": "Module category (auto-set from day_number)"
+    },
+    "week_number": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 52,
+      "description": "Which week of the 52-week program (1-52)"
+    },
+    "day_number": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Which day of the week (1=Mon ... 5=Fri)"
     },
     "week_label": {
       "type": "string",
-      "description": "e.g. 'Week of Jun 16' \u2014 displayed as a badge"
+      "description": "e.g. 'Week 1' \u2014 auto-generated from week_number"
     },
     "is_featured": {
       "type": "boolean",
@@ -37,7 +49,7 @@
     },
     "order": {
       "type": "number",
-      "description": "Display order"
+      "description": "Display order (auto-set: week * 10 + day)"
     },
     "video_url": {
       "type": "string",
@@ -73,7 +85,9 @@
   "required": [
     "title",
     "summary",
-    "content"
+    "content",
+    "week_number",
+    "day_number"
   ],
   "rls": {
     "create": {
