@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { User, Mail, Loader2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const COACHING_PRICE_ID = "price_1TlcpiDAmkJ2t1TLxnJ2w4wY";
+const COACHING_PRICE_ID = "price_1TlyeNRluJwLogLmRLgiY5KB";
 
 const SESSIONS = [
   {

@@ -11,7 +11,7 @@ const PLANS = [
     price: "$99.99",
     period: "/month",
     description: "Month-to-month, cancel anytime",
-    priceId: "price_1TlcPXDAmkJ2t1TLBZLLdNnO",
+    priceId: "price_1TlyeLRluJwLogLmSM4I8uy8",
     features: [
       "Full access to all mental training tools",
       "Daily focus & journaling",
@@ -26,7 +26,7 @@ const PLANS = [
     price: "$239.97",
     period: "/3 months",
     description: "20% discount — paid in full upfront",
-    priceId: "price_1TlcPXDAmkJ2t1TLw63MkHyK",
+    priceId: "price_1TlyeKRluJwLogLmVEPJdkPo",
     badge: "Save 20%",
     features: [
       "Everything in Monthly",
@@ -41,7 +41,7 @@ const PLANS = [
     price: "$599.94",
     period: "/year",
     description: "50% discount — paid in full upfront",
-    priceId: "price_1TlcPXDAmkJ2t1TLNv5dOTJo",
+    priceId: "price_1TlyeKRluJwLogLmUivbCGOM",
     badge: "Save 50%",
     popular: true,
     features: [
