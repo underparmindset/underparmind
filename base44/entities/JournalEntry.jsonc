@@ -19,21 +19,7 @@
   "rls": {
     "create": true,
     "read": {
-      "$or": [
-        {
-          "created_by_id": "{{user.id}}"
-        },
-        {
-          "user_condition": {
-            "user_type": "coach"
-          }
-        },
-        {
-          "user_condition": {
-            "user_type": "parent"
-          }
-        }
-      ]
+      "created_by_id": "{{user.id}}"
     },
     "update": {
       "created_by_id": "{{user.id}}"
