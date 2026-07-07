@@ -11,45 +11,26 @@ import {
 import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges } from "@/lib/calculations";
 import MPSRing from "@/components/dashboard/MPSRing";
 import InsightCard from "@/components/dashboard/InsightCard";
-import PlayerMentalGym from "@/components/parent-coach/PlayerMentalGym";
 import PlayerWinTheDay from "@/components/parent-coach/PlayerWinTheDay";
+import PlayerMentalGym from "@/components/parent-coach/PlayerMentalGym";
 import { cn } from "@/lib/utils";
 
 export default function PlayerDashboard() {
   const { playerId } = useParams();
-  const [player, setPlayer] = useState(null);
 
-  useEffect(() => {
-    base44.entities.User.filter({ id: playerId }).then((res) => {
-      setPlayer(res[0] || null);
-    });
-  }, [playerId]);
-
-  const { data: allRounds = [] } = useQuery({
-    queryKey: ["allRounds"],
-    queryFn: () => base44.entities.Round.list("-date", 500),
+  const { data, isLoading } = useQuery({
+    queryKey: ["playerData", playerId],
+    queryFn: async () => {
+      const res = await base44.functions.invoke("getPlayerData", { playerId });
+      return res.data;
+    },
   });
 
-  const { data: allReports = [] } = useQuery({
-    queryKey: ["allFocusReports"],
-    queryFn: () => base44.entities.FocusReport.list("-report_date", 500),
-  });
-
-  const { data: allGoals = [] } = useQuery({
-    queryKey: ["allGoals"],
-    queryFn: () => base44.entities.Goal.list("-created_date", 500),
-  });
-
-  const { data: allJournals = [] } = useQuery({
-    queryKey: ["allJournals"],
-    queryFn: () => base44.entities.JournalEntry.list("-entry_date", 500),
-  });
-
-  // Filter to this player
-  const rounds = allRounds.filter((r) => r.created_by_id === playerId);
-  const reports = allReports.filter((r) => r.created_by_id === playerId);
-  const goals = allGoals.filter((g) => g.created_by_id === playerId);
-  const journals = allJournals.filter((j) => j.created_by_id === playerId);
+  const player = data?.player;
+  const rounds = data?.rounds || [];
+  const reports = data?.reports || [];
+  const goals = data?.goals || [];
+  const journals = data?.journals || [];
 
   // Stats
   const mps = calculateMPS(rounds);
@@ -70,7 +51,7 @@ export default function PlayerDashboard() {
     : "—";
   const puttRounds = rounds.filter((r) => r.total_putts != null);
   const avgPutts = puttRounds.length
-    ? (puttRounds.reduce((a, r) => a + r.total_putts, 0) / puttRounds.length).toFixed(1)
+    ? (puttRounds.reduce((a, r) => a + (r.total_putts || 0), 0) / puttRounds.length).toFixed(1)
     : "—";
 
   const chartData = [...rounds].reverse().slice(-15).map((r) => ({
@@ -96,6 +77,25 @@ export default function PlayerDashboard() {
   })();
 
   const playerName = player?.first_name || player?.full_name || "Player";
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!player) {
+    return (
+      <div className="space-y-4">
+        <Link to="/roster" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to roster
+        </Link>
+        <p className="text-muted-foreground">Player not found or you don't have access.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -264,7 +264,7 @@ export default function PlayerDashboard() {
       {/* Win The Day history & Mental Gym progress */}
       <div className="grid md:grid-cols-2 gap-6">
         <PlayerWinTheDay reports={reports} />
-        <PlayerMentalGym playerId={playerId} />
+        <PlayerMentalGym playerId={playerId} progress={data?.moduleProgress || []} />
       </div>
 
       {/* Recent rounds */}

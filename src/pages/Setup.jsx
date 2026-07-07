@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,11 @@ export default function Setup() {
   const [coachingGoal, setCoachingGoal] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    base44.auth.me().then(setCurrentUser).catch(() => {});
+  }, []);
 
   const handleSubmit = async () => {
     if (!firstName.trim()) return;
@@ -45,6 +50,22 @@ export default function Setup() {
         coaching_goal: role === "player" ? coachingGoal : null,
         onboarded: true,
       });
+
+      // If coach/parent, auto-accept any pending connection invitations
+      if (role === "coach" || role === "parent") {
+        try {
+          const result = await base44.functions.invoke("acceptPendingConnections", {});
+          // Merge newly linked player IDs into the user's profile
+          if (result.data?.playerIds?.length > 0) {
+            const existing = currentUser?.linked_player_ids || [];
+            const merged = [...new Set([...existing, ...result.data.playerIds])];
+            await base44.auth.updateMe({ linked_player_ids: merged });
+          }
+        } catch (e) {
+          // Non-critical — can retry later
+        }
+      }
+
       navigate(role === "player" ? "/pricing" : "/roster");
     } catch (err) {
       setError(err.message || "Failed to save profile. Please try again.");

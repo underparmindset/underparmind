@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Target, Flag, BookOpen, Dumbbell, PenLine, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Target, Flag, BookOpen, Dumbbell, PenLine, MessageSquare, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { path: "/mental-gym", label: "Mental Gym", icon: Dumbbell },
   { path: "/journal", label: "Journal", icon: PenLine },
   { path: "/coaching", label: "Coaching", icon: MessageSquare },
+  { path: "/invite", label: "Invite", icon: UserPlus },
 ];
 
 export default function Layout() {

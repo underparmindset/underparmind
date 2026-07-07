@@ -1,0 +1,62 @@
+{
+  "name": "PlayerConnection",
+  "type": "object",
+  "properties": {
+    "player_id": {
+      "type": "string",
+      "description": "The player's user ID"
+    },
+    "player_name": {
+      "type": "string",
+      "description": "Player's name (denormalized for roster display)"
+    },
+    "invited_email": {
+      "type": "string",
+      "description": "Email of the invited coach/parent"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "parent",
+        "coach"
+      ],
+      "description": "The role the invited person will have"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted"
+      ],
+      "default": "pending"
+    },
+    "coach_parent_id": {
+      "type": "string",
+      "description": "User ID of the coach/parent once they accept"
+    }
+  },
+  "required": [
+    "player_id",
+    "invited_email",
+    "role"
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.invited_email": "{{user.email}}"
+        }
+      ]
+    },
+    "update": {
+      "created_by_id": "{{user.id}}"
+    },
+    "delete": {
+      "created_by_id": "{{user.id}}"
+    }
+  }
+}

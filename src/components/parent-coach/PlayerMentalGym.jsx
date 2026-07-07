@@ -2,20 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { CheckCircle2, Circle, Dumbbell } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import { cn } from "@/lib/utils";
 
-export default function PlayerMentalGym({ playerId }) {
+export default function PlayerMentalGym({ playerId, progress }) {
   const { data: allModules = [] } = useQuery({
     queryKey: ["gymModules"],
     queryFn: () => base44.entities.GymModule.list("-created_date", 200),
   });
 
-  const { data: allProgress = [] } = useQuery({
-    queryKey: ["allModuleProgress"],
-    queryFn: () => base44.entities.ModuleProgress.list("-created_date", 500),
-  });
-
-  const playerProgress = allProgress.filter((p) => p.created_by_id === playerId);
+  const playerProgress = progress || [];
   const completed = playerProgress.filter((p) => p.completed);
   const inProgress = playerProgress.filter((p) => !p.completed);
 

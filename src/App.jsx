@@ -18,6 +18,7 @@ import MentalGym from '@/pages/MentalGym';
 import Journal from '@/pages/Journal';
 import Coaching from '@/pages/Coaching';
 import Booking from '@/pages/Booking';
+import InviteCoachParent from '@/pages/InviteCoachParent';
 import Roster from '@/pages/parent-coach/Roster';
 import PlayerDashboard from '@/pages/parent-coach/PlayerDashboard';
 import GymEditor from '@/pages/admin/GymEditor';
@@ -74,6 +75,7 @@ const AuthenticatedApp = () => {
           <Route path="/journal" element={<Journal />} />
           <Route path="/coaching" element={<Coaching />} />
           <Route path="/booking" element={<Booking />} />
+          <Route path="/invite" element={<InviteCoachParent />} />
         </Route>
       </Route>
       {/* Coach / Parent routes */}
