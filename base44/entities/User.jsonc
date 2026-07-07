@@ -30,6 +30,14 @@
     "onboarded": {
       "type": "boolean",
       "default": false
+    },
+    "linked_player_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Player user IDs that this coach/parent is linked to"
     }
   }
 }
