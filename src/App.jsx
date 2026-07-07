@@ -1,9 +1,10 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from '@/components/Layout';
@@ -51,24 +52,30 @@ const AuthenticatedApp = () => {
       <Route path="/setup" element={<Setup />} />
       <Route path="/pricing" element={<Pricing />} />
       {/* Player routes */}
-      <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/focus" element={<DailyFocus />} />
-        <Route path="/goals" element={<Goals />} />
-        <Route path="/log-round" element={<LogRound />} />
-        <Route path="/mental-gym" element={<MentalGym />} />
-        <Route path="/journal" element={<Journal />} />
-        <Route path="/coaching" element={<Coaching />} />
-        <Route path="/booking" element={<Booking />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/focus" element={<DailyFocus />} />
+          <Route path="/goals" element={<Goals />} />
+          <Route path="/log-round" element={<LogRound />} />
+          <Route path="/mental-gym" element={<MentalGym />} />
+          <Route path="/journal" element={<Journal />} />
+          <Route path="/coaching" element={<Coaching />} />
+          <Route path="/booking" element={<Booking />} />
+        </Route>
       </Route>
       {/* Coach / Parent routes */}
-      <Route element={<CoachLayout />}>
-        <Route path="/roster" element={<Roster />} />
-        <Route path="/player/:playerId" element={<PlayerDashboard />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<CoachLayout />}>
+          <Route path="/roster" element={<Roster />} />
+          <Route path="/player/:playerId" element={<PlayerDashboard />} />
+        </Route>
       </Route>
       {/* Admin-only routes */}
-      <Route element={<Layout />}>
-        <Route path="/gym-editor" element={<GymEditor />} />
+      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+        <Route element={<Layout />}>
+          <Route path="/gym-editor" element={<GymEditor />} />
+        </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
