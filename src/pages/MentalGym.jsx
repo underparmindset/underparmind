@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { Dumbbell, TrendingUp } from "lucide-react";
 import WeekCard from "@/components/gym/WeekCard";
+import BadgeGrid from "@/components/gym/BadgeGrid";
+import { calculateDayStreak, calculateWeeksCompleted, getNewlyEarnedBadges } from "@/lib/badgeCalculations";
 import { DAY_SCHEDULE, TOTAL_WEEKS, DAYS_PER_WEEK } from "@/lib/gymConfig";
 
 export default function MentalGym() {
@@ -80,23 +82,47 @@ export default function MentalGym() {
 
   const toggleComplete = async (moduleId) => {
     const existing = progress.find((p) => p.module_id === moduleId);
+    const today = format(new Date(), "yyyy-MM-dd");
+
+    // Compute what progress will look like after the toggle
+    let newProgress;
+    if (existing) {
+      newProgress = progress.map((p) =>
+        p.module_id === moduleId
+          ? { ...p, completed: !p.completed, completed_date: !p.completed ? today : null }
+          : p
+      );
+    } else {
+      newProgress = [...progress, { module_id: moduleId, completed: true, completed_date: today }];
+    }
+
+    // Check for newly earned badges
+    const newBadges = getNewlyEarnedBadges(modules, progress, newProgress);
+
     if (existing) {
       await base44.entities.ModuleProgress.update(existing.id, {
         completed: !existing.completed,
-        completed_date: !existing.completed ? format(new Date(), "yyyy-MM-dd") : null,
+        completed_date: !existing.completed ? today : null,
       });
     } else {
       await base44.entities.ModuleProgress.create({
         module_id: moduleId,
         completed: true,
-        completed_date: format(new Date(), "yyyy-MM-dd"),
+        completed_date: today,
       });
     }
     queryClient.invalidateQueries({ queryKey: ["moduleProgress"] });
-    toast.success("Progress updated!");
+
+    if (newBadges.length > 0) {
+      newBadges.forEach((b) => toast.success(`🏅 Badge earned: ${b.name}!`));
+    } else {
+      toast.success("Progress updated!");
+    }
   };
 
   const totalCompleted = progress.filter((p) => p.completed).length;
+  const dayStreak = calculateDayStreak(progress);
+  const weeksCompletedCount = calculateWeeksCompleted(modules, progress);
 
   if (isLoading) {
     return (
@@ -169,6 +195,14 @@ export default function MentalGym() {
           ))}
         </div>
       )}
+
+      {/* Badges */}
+      <div className="pt-2 border-t border-border">
+        <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
+          🏅 Your Badges
+        </h2>
+        <BadgeGrid streak={dayStreak} weeksCompleted={weeksCompletedCount} />
+      </div>
     </div>
   );
 }
