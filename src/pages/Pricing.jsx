@@ -56,6 +56,7 @@ const PLANS = [
 export default function Pricing() {
   const [loadingTier, setLoadingTier] = useState(null);
   const [error, setError] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const inIframe = window.self !== window.top;
 
   const handleCheckout = async (plan) => {
@@ -69,6 +70,7 @@ export default function Pricing() {
       const response = await base44.functions.invoke("createCheckoutSession", {
         priceId: plan.priceId,
         tier: plan.id,
+        ...(promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
       });
       window.location.href = response.data.url;
     } catch (err) {
@@ -151,6 +153,21 @@ export default function Pricing() {
               </Button>
             </div>
           ))}
+        </div>
+
+        <div className="mt-8 max-w-md mx-auto">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value)}
+              placeholder="Enter promo code"
+              className="flex-1 h-11 rounded-lg border border-white/30 bg-white/10 text-primary-foreground placeholder:text-primary-foreground/50 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+          </div>
+          <p className="text-primary-foreground/50 text-xs mt-2 text-center">
+            Apply your code at checkout for any plan.
+          </p>
         </div>
 
         <div className="mt-8 text-center">

@@ -36,6 +36,7 @@ const SESSIONS = [
 export default function Coaching() {
   const [loadingSession, setLoadingSession] = useState(null);
   const [error, setError] = useState("");
+  const [promoCode, setPromoCode] = useState("");
   const inIframe = window.self !== window.top;
 
   const handleCheckout = async (session) => {
@@ -50,6 +51,7 @@ export default function Coaching() {
         priceId: COACHING_PRICE_ID,
         tier: session.name,
         mode: "payment",
+        ...(promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
       });
       window.location.href = response.data.url;
     } catch (err) {
@@ -92,6 +94,17 @@ export default function Coaching() {
         <Button onClick={() => handleCheckout(SESSIONS[0])} disabled={loadingSession !== null} className="bg-primary hover:bg-primary/90 flex-shrink-0">
           <Mail className="w-4 h-4 mr-1.5" /> Book a Session
         </Button>
+      </div>
+
+      {/* Promo code */}
+      <div className="flex items-center gap-2 max-w-sm">
+        <input
+          type="text"
+          value={promoCode}
+          onChange={(e) => setPromoCode(e.target.value)}
+          placeholder="Enter promo code"
+          className="flex-1 h-9 rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+        />
       </div>
 
       {/* Coaching Sessions */}
