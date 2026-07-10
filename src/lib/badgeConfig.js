@@ -1,4 +1,4 @@
-import { Flame, Zap, ShieldCheck, Crown, Star, Award, Trophy, Medal } from "lucide-react";
+import { Flame, Zap, ShieldCheck, Crown, Star, Award, Trophy, Medal, Target } from "lucide-react";
 
 // Badges for consecutive days completing at least one mental gym module
 export const STREAK_BADGES = [
@@ -18,4 +18,12 @@ export const WEEKLY_BADGES = [
   { id: "week_52", name: "52-Week Legend", description: "Complete all 52 weeks", icon: Crown, threshold: 52, color: "text-yellow-500", bg: "bg-yellow-500/10" },
 ];
 
-export const ALL_BADGES = [...STREAK_BADGES, ...WEEKLY_BADGES];
+// Badges for completing goals
+export const GOAL_BADGES = [
+  { id: "goal_1", name: "First Win", description: "Complete your first goal", icon: Target, threshold: 1, color: "text-green-500", bg: "bg-green-500/10" },
+  { id: "goal_5", name: "Goal Getter", description: "Complete 5 goals", icon: Trophy, threshold: 5, color: "text-blue-500", bg: "bg-blue-500/10" },
+  { id: "goal_10", name: "Unstoppable", description: "Complete 10 goals", icon: Zap, threshold: 10, color: "text-amber-500", bg: "bg-amber-500/10" },
+  { id: "goal_25", name: "Champion", description: "Complete 25 goals", icon: Crown, threshold: 25, color: "text-purple-500", bg: "bg-purple-500/10" },
+];
+
+export const ALL_BADGES = [...STREAK_BADGES, ...WEEKLY_BADGES, ...GOAL_BADGES];

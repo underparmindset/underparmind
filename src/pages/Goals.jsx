@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Check, X, Plus, Trophy, Target, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { getNewlyEarnedGoalBadges } from "@/lib/badgeCalculations";
 import { cn } from "@/lib/utils";
 
 export default function Goals() {
@@ -49,9 +50,20 @@ export default function Goals() {
   };
 
   const markGoal = async (id, status) => {
+    // Check for newly earned badges before updating
+    const newGoals = goals.map((g) =>
+      g.id === id ? { ...g, status, resolved_date: format(new Date(), "yyyy-MM-dd") } : g
+    );
+    const newBadges = status === "hit" ? getNewlyEarnedGoalBadges(goals, newGoals) : [];
+
     await base44.entities.Goal.update(id, { status, resolved_date: format(new Date(), "yyyy-MM-dd") });
     queryClient.invalidateQueries({ queryKey: ["goals"] });
-    toast.success(status === "hit" ? "Goal crushed! 🏆" : "Goal marked as missed");
+
+    if (newBadges.length > 0) {
+      newBadges.forEach((b) => toast.success(`🏅 Badge earned: ${b.name}!`));
+    } else {
+      toast.success(status === "hit" ? "Goal crushed! 🏆" : "Goal marked as missed");
+    }
   };
 
   const GoalGroup = ({ title, goalList }) => {

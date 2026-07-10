@@ -1,5 +1,5 @@
 import { parseISO, differenceInCalendarDays } from "date-fns";
-import { STREAK_BADGES, WEEKLY_BADGES } from "./badgeConfig";
+import { STREAK_BADGES, WEEKLY_BADGES, GOAL_BADGES } from "./badgeConfig";
 
 /**
  * Calculate the longest streak of consecutive calendar days
@@ -90,6 +90,29 @@ export function getNewlyEarnedBadges(modules, oldProgress, newProgress) {
   });
   WEEKLY_BADGES.forEach((b) => {
     if (oldWeeks < b.threshold && newWeeks >= b.threshold) newBadges.push(b);
+  });
+
+  return newBadges;
+}
+
+/**
+ * Count how many goals have been completed (status "hit").
+ */
+export function calculateGoalsCompleted(goals) {
+  if (!goals || goals.length === 0) return 0;
+  return goals.filter((g) => g.status === "hit").length;
+}
+
+/**
+ * Compare old vs new goal lists and return newly-earned goal badges.
+ */
+export function getNewlyEarnedGoalBadges(oldGoals, newGoals) {
+  const oldCount = calculateGoalsCompleted(oldGoals);
+  const newCount = calculateGoalsCompleted(newGoals);
+
+  const newBadges = [];
+  GOAL_BADGES.forEach((b) => {
+    if (oldCount < b.threshold && newCount >= b.threshold) newBadges.push(b);
   });
 
   return newBadges;
