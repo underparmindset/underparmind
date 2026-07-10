@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2, Shield, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const PLANS = [
   {
@@ -174,6 +175,12 @@ export default function Pricing() {
           <p className="text-primary-foreground/60 text-sm flex items-center justify-center gap-2">
             <Shield className="w-4 h-4" />
             Secure payment powered by Stripe. Cancel anytime.
+          </p>
+          <p className="text-primary-foreground/40 text-xs mt-3">
+            By subscribing, you agree to our{" "}
+            <Link to="/terms" className="underline hover:text-primary-foreground/60">Terms of Service</Link>
+            {" "}and{" "}
+            <Link to="/privacy" className="underline hover:text-primary-foreground/60">Privacy Policy</Link>.
           </p>
         </div>
       </div>

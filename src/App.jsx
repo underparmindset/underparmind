@@ -29,6 +29,9 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import Support from '@/pages/Support';
 import AccountSettings from '@/pages/AccountSettings';
+import Billing from '@/pages/Billing';
+import PrivacyPolicy from '@/pages/PrivacyPolicy';
+import TermsOfService from '@/pages/TermsOfService';
 
 const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password'];
 
@@ -66,10 +69,13 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/setup" element={<Setup />} />
       <Route path="/pricing" element={<Pricing />} />
-      {/* Support & Settings — accessible to all authenticated users */}
+      <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/terms" element={<TermsOfService />} />
+      {/* Support, Settings & Billing — accessible to all authenticated users */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
         <Route path="/support" element={<Support />} />
         <Route path="/settings" element={<AccountSettings />} />
+        <Route path="/billing" element={<Billing />} />
       </Route>
       {/* Player routes */}
       <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>

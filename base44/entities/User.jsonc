@@ -38,6 +38,25 @@
       },
       "default": [],
       "description": "Player user IDs that this coach/parent is linked to"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID for billing portal access"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "cancelled",
+        "past_due",
+        "trialing",
+        "none"
+      ],
+      "default": "none"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "description": "Current subscription plan tier (monthly, quarterly, annual)"
     }
   }
 }

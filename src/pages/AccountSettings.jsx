@@ -16,6 +16,8 @@ import {
   Loader2,
   KeyRound,
   Save,
+  CreditCard,
+  ChevronRight,
 } from "lucide-react";
 
 const GOALS = [
@@ -213,6 +215,24 @@ export default function AccountSettings() {
                 </div>
               )}
             </div>
+
+            {/* Billing */}
+            <Link to="/billing" className="block">
+              <div className="bg-card rounded-xl border border-border p-5 hover:shadow-md transition-all">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-primary" />
+                    <div>
+                      <h2 className="font-display font-bold text-lg">Billing</h2>
+                      <p className="text-xs text-muted-foreground">
+                        Manage subscription &amp; payment
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                </div>
+              </div>
+            </Link>
 
             {/* Security */}
             <div className="bg-card rounded-xl border border-border p-5 space-y-3">
