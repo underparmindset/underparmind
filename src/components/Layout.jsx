@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Target, Flag, BookOpen, Dumbbell, PenLine, MessageSquare, UserPlus } from "lucide-react";
+import { LayoutDashboard, Target, Flag, BookOpen, Dumbbell, PenLine, MessageSquare, UserPlus, HelpCircle, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -27,6 +27,22 @@ export default function Layout() {
             </div>
             <span className="text-white font-display font-bold text-lg tracking-tight">Under Par Mindset</span>
           </Link>
+          <div className="flex items-center gap-1">
+            <Link
+              to="/support"
+              className="p-2 rounded-lg text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 transition-colors"
+              title="Support"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </Link>
+            <Link
+              to="/settings"
+              className="p-2 rounded-lg text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 transition-colors"
+              title="Settings"
+            >
+              <Settings className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
         {/* Desktop nav */}
         <nav className="max-w-7xl mx-auto px-4 hidden md:flex gap-1 pb-1">
