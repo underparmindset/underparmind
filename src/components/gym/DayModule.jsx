@@ -45,10 +45,10 @@ export default function DayModule({ dayInfo, mod, isComplete, onToggleComplete }
           {isComplete ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium">
-            Day {dayInfo.day} · {dayInfo.label}
+          <p className="text-sm font-semibold leading-snug">{mod.title}</p>
+          <p className="text-xs text-muted-foreground leading-snug line-clamp-2 mt-0.5">
+            {mod.summary}
           </p>
-          <p className="text-xs text-muted-foreground truncate">{mod.title}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground hidden sm:inline">
@@ -64,7 +64,10 @@ export default function DayModule({ dayInfo, mod, isComplete, onToggleComplete }
       </button>
 
       {expanded && (
-        <div className="px-3 pb-3 border-t border-border pt-3">
+        <div className="px-3 pb-3 border-t border-border pt-3 space-y-3">
+          <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
+            {mod.summary}
+          </p>
           <div className="prose prose-sm max-w-none text-foreground text-sm leading-relaxed">
             <ReactMarkdown>{mod.content}</ReactMarkdown>
           </div>
