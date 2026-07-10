@@ -10,7 +10,7 @@ import { Plus, Star, X, Check, Link2, Video, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import VideoInput from "@/components/gym/VideoInput";
 import ModuleRow from "@/components/gym/ModuleRow";
-import { DAY_SCHEDULE, TOTAL_WEEKS } from "@/lib/gymConfig";
+import { DAY_SCHEDULE, TOTAL_WEEKS, getPhaseForWeek, isAssessmentWeek } from "@/lib/gymConfig";
 
 const SOCIAL_PLATFORMS = ["Instagram", "TikTok", "YouTube", "X", "Facebook", "LinkedIn"];
 
@@ -20,8 +20,11 @@ const EMPTY_FORM = {
   content: "",
   week_number: 1,
   day_number: 1,
-  category: "Mindset",
+  category: "Focus",
+  phase: "Foundation",
   week_label: "Week 1",
+  week_theme: "",
+  is_assessment: false,
   is_featured: false,
   order: 11,
   video_url: "",
@@ -69,11 +72,14 @@ export default function GymEditor() {
 
   const openNew = (weekNum, dayNum) => {
     const dayInfo = DAY_SCHEDULE.find((d) => d.day === dayNum);
+    const phaseInfo = getPhaseForWeek(weekNum);
     setForm({
       ...EMPTY_FORM,
       week_number: weekNum,
       day_number: dayNum,
-      category: dayInfo?.category || "Mindset",
+      category: dayInfo?.category || "Focus",
+      phase: phaseInfo?.id || "Foundation",
+      is_assessment: isAssessmentWeek(weekNum),
       week_label: `Week ${weekNum}`,
       order: weekNum * 10 + dayNum,
     });
@@ -87,8 +93,11 @@ export default function GymEditor() {
       content: mod.content || "",
       week_number: mod.week_number || 1,
       day_number: mod.day_number || 1,
-      category: mod.category || "",
+      category: mod.category || "Focus",
+      phase: mod.phase || "Foundation",
       week_label: mod.week_label || "",
+      week_theme: mod.week_theme || "",
+      is_assessment: mod.is_assessment || false,
       is_featured: mod.is_featured || false,
       order: mod.order || 0,
       video_url: mod.video_url || "",
@@ -128,9 +137,12 @@ export default function GymEditor() {
     }
     setSaving(true);
     const dayInfo = DAY_SCHEDULE.find((d) => d.day === form.day_number);
+    const phaseInfo = getPhaseForWeek(form.week_number);
     const payload = {
       ...form,
       category: dayInfo?.category || form.category,
+      phase: phaseInfo?.id || "Foundation",
+      is_assessment: isAssessmentWeek(form.week_number),
       order: form.week_number * 10 + form.day_number,
       week_label: `Week ${form.week_number}`,
     };
@@ -224,6 +236,37 @@ export default function GymEditor() {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Phase & Assessment (auto-computed from week number) */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {(() => {
+              const phaseInfo = getPhaseForWeek(form.week_number);
+              if (!phaseInfo) return null;
+              return (
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+                  Phase {phaseInfo.roman} — {phaseInfo.id}
+                </span>
+              );
+            })()}
+            {isAssessmentWeek(form.week_number) && (
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-accent/15 text-accent">
+                Assessment Week
+              </span>
+            )}
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-secondary text-secondary-foreground">
+              {DAY_SCHEDULE.find((d) => d.day === form.day_number)?.category || "Focus"}
+            </span>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium mb-1 block">Week Theme</label>
+            <Input
+              value={form.week_theme}
+              onChange={(e) => setForm((f) => ({ ...f, week_theme: e.target.value }))}
+              placeholder="e.g. The 10-Yard Rule"
+            />
+            <p className="text-xs text-muted-foreground mt-1">All 5 days in a week share the same theme</p>
           </div>
 
           <div>
@@ -399,7 +442,32 @@ export default function GymEditor() {
                 className="bg-card border border-border rounded-xl overflow-hidden"
               >
                 <div className="bg-muted/40 px-4 py-2.5 border-b border-border">
-                  <p className="font-display font-bold text-sm">Week {weekNum}</p>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <p className="font-display font-bold text-sm">Week {weekNum}</p>
+                    <div className="flex items-center gap-1.5">
+                      {(() => {
+                        const phaseInfo = getPhaseForWeek(weekNum);
+                        if (!phaseInfo) return null;
+                        return (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary">
+                            {phaseInfo.roman}
+                          </span>
+                        );
+                      })()}
+                      {isAssessmentWeek(weekNum) && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent/15 text-accent">
+                          Assessment
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {(() => {
+                    const firstMod = Object.values(weekData)[0];
+                    if (firstMod?.week_theme) {
+                      return <p className="text-xs text-muted-foreground mt-0.5">{firstMod.week_theme}</p>;
+                    }
+                    return null;
+                  })()}
                 </div>
                 <div className="p-3 space-y-2">
                   {DAY_SCHEDULE.map((dayInfo) => {

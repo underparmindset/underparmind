@@ -7,7 +7,7 @@ import { Dumbbell, TrendingUp } from "lucide-react";
 import WeekCard from "@/components/gym/WeekCard";
 import BadgeGrid from "@/components/gym/BadgeGrid";
 import { calculateDayStreak, calculateWeeksCompleted, getNewlyEarnedBadges } from "@/lib/badgeCalculations";
-import { DAY_SCHEDULE, TOTAL_WEEKS, DAYS_PER_WEEK } from "@/lib/gymConfig";
+import { DAY_SCHEDULE, TOTAL_WEEKS, DAYS_PER_WEEK, getPhaseForWeek } from "@/lib/gymConfig";
 
 export default function MentalGym() {
   const queryClient = useQueryClient();
@@ -157,6 +157,10 @@ export default function MentalGym() {
               : "Let's begin!"}
           </p>
           <p className="text-xs text-muted-foreground">
+            {(() => {
+              const phaseInfo = getPhaseForWeek(currentWeek || maxWeekWithContent || 1);
+              return phaseInfo ? `Phase ${phaseInfo.roman} — ${phaseInfo.id} · ` : "";
+            })()}
             {totalCompleted} modules completed
             {maxWeekWithContent > 0 ? ` across ${maxWeekWithContent} week${maxWeekWithContent > 1 ? "s" : ""}` : ""}
           </p>

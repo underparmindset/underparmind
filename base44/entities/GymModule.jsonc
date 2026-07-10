@@ -12,19 +12,28 @@
     },
     "content": {
       "type": "string",
-      "description": "Full instructional content (supports markdown)"
+      "description": "Full instructional content (supports markdown). Follow the Learn \u2192 Train \u2192 Apply \u2192 Log template."
     },
     "category": {
       "type": "string",
       "enum": [
-        "Mindset",
-        "Routine",
         "Focus",
-        "Resilience",
         "Confidence",
-        "Course Management"
+        "Composure",
+        "Commitment",
+        "Resilience"
       ],
-      "description": "Module category (auto-set from day_number)"
+      "description": "Pillar trained this day (auto-set from day_number: Mon=Focus, Tue=Confidence, Wed=Composure, Thu=Commitment, Fri=Resilience)"
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "Foundation",
+        "Application",
+        "Pressure",
+        "Mastery"
+      ],
+      "description": "Training phase (auto-set from week_number: 1-13=Foundation, 14-26=Application, 27-39=Pressure, 40-52=Mastery)"
     },
     "week_number": {
       "type": "number",
@@ -41,6 +50,15 @@
     "week_label": {
       "type": "string",
       "description": "e.g. 'Week 1' \u2014 auto-generated from week_number"
+    },
+    "week_theme": {
+      "type": "string",
+      "description": "The theme for this week (e.g. 'The 10-Yard Rule'). All 5 days share the same theme."
+    },
+    "is_assessment": {
+      "type": "boolean",
+      "default": false,
+      "description": "True for assessment weeks (13, 26, 39, 52) \u2014 replaces daily template with review cycle"
     },
     "is_featured": {
       "type": "boolean",

@@ -1,6 +1,6 @@
 import { Lock, Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { DAY_SCHEDULE, DAYS_PER_WEEK } from "@/lib/gymConfig";
+import { DAY_SCHEDULE, DAYS_PER_WEEK, getPhaseForWeek, isAssessmentWeek } from "@/lib/gymConfig";
 import DayModule from "@/components/gym/DayModule";
 
 export default function WeekCard({
@@ -67,8 +67,29 @@ export default function WeekCard({
           {isComplete ? <Check className="w-5 h-5" /> : weekNum}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-display font-bold">Week {weekNum}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="font-display font-bold">Week {weekNum}</p>
+            {(() => {
+              const phaseInfo = getPhaseForWeek(weekNum);
+              if (!phaseInfo) return null;
+              return (
+                <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-primary/10 text-primary">
+                  {phaseInfo.roman}
+                </span>
+              );
+            })()}
+            {isAssessmentWeek(weekNum) && (
+              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-accent/15 text-accent">
+                Assessment
+              </span>
+            )}
+          </div>
           <p className="text-xs text-muted-foreground">
+            {(() => {
+              const firstMod = Object.values(weekData)[0];
+              if (firstMod?.week_theme) return firstMod.week_theme + " · ";
+              return "";
+            })()}
             {completedCount} of {DAYS_PER_WEEK} days complete
           </p>
         </div>
