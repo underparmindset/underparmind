@@ -1,17 +1,5 @@
-import ReactQuill, { Quill } from "react-quill-new";
+import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-
-// Register custom line-height format
-const Parchment = Quill.import("parchment");
-const LineHeightAttributor = new Parchment.Attributor.Style(
-  "lineheight",
-  "line-height",
-  {
-    scope: Parchment.Scope.BLOCK,
-    whitelist: ["1.3", "1.5", "1.75", "2", "2.5"],
-  }
-);
-Quill.register(LineHeightAttributor, true);
 
 const MODULES = {
   toolbar: {
@@ -24,7 +12,6 @@ const MODULES = {
       [{ align: [] }],
       [{ list: "ordered" }, { list: "bullet" }],
       [{ indent: "-1" }, { indent: "+1" }],
-      [{ lineheight: ["1.3", "1.5", "1.75", "2", "2.5"] }],
       ["blockquote"],
       ["clean"],
     ],
