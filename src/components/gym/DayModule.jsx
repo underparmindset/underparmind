@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import ReactMarkdown from "react-markdown";
+import ContentRenderer from "@/components/gym/ContentRenderer";
 import ModuleMedia from "@/components/gym/ModuleMedia";
 
 export default function DayModule({ dayInfo, mod, isComplete, onToggleComplete }) {
@@ -68,9 +68,7 @@ export default function DayModule({ dayInfo, mod, isComplete, onToggleComplete }
           <p className="text-sm text-muted-foreground italic border-l-2 border-primary/30 pl-3">
             {mod.summary}
           </p>
-          <div className="prose prose-sm max-w-none text-foreground text-sm leading-relaxed">
-            <ReactMarkdown>{mod.content}</ReactMarkdown>
-          </div>
+          <ContentRenderer content={mod.content} />
           <ModuleMedia mod={mod} />
           <Button
             onClick={() => onToggleComplete(mod.id)}

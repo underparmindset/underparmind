@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Plus, Star, X, Check, Link2, Video, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import VideoInput from "@/components/gym/VideoInput";
+import RichTextEditor from "@/components/gym/RichTextEditor";
 import ModuleRow from "@/components/gym/ModuleRow";
 import { DAY_SCHEDULE, TOTAL_WEEKS, getPhaseForWeek, isAssessmentWeek } from "@/lib/gymConfig";
 
@@ -375,12 +376,11 @@ export default function GymEditor() {
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">Content * (Markdown supported)</label>
-            <Textarea
+            <label className="text-sm font-medium mb-1 block">Content *</label>
+            <RichTextEditor
               value={form.content}
-              onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-              placeholder={"Write the module content here...\n\nYou can use **bold**, bullet lists, numbered steps, etc."}
-              className="min-h-[200px] font-mono text-sm"
+              onChange={(val) => setForm((f) => ({ ...f, content: val }))}
+              placeholder="Write the module content here..."
             />
           </div>
 
