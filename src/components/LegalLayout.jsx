@@ -23,13 +23,7 @@ export default function LegalLayout({ title, icon: Icon, lastUpdated, children }
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0">
-            <span className="text-primary font-heading font-bold text-sm">UP</span>
-          </div>
-          <span className="text-lg tracking-tight flex items-baseline gap-1.5">
-            <span className="font-logo-primary font-extralight text-primary-foreground">Under Par</span>
-            <span className="font-logo-secondary font-light text-accent">Mindset</span>
-          </span>
+          <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/cbcc3b361_UPM_MainLogo_Blackv1300x.png" alt="Under Par Mindset" className="h-7 w-auto" />
         </div>
       </header>
       <main className="max-w-3xl mx-auto px-4 py-8 pb-24">

@@ -21,16 +21,10 @@ export default function CoachLayout() {
       <header className="bg-primary sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/roster" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0 shadow-sm">
-              <span className="text-primary font-heading font-bold text-sm">UP</span>
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-logo-primary font-extralight text-primary-foreground text-lg tracking-tight">Under Par</span>
-              <span className="font-logo-secondary font-light text-accent text-lg">Mindset</span>
-              <span className="ml-2 text-xs font-normal text-primary-foreground/50 uppercase tracking-widest">
-                {user?.user_type === "coach" ? "Coach" : "Parent"} View
-              </span>
-            </div>
+            <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/cbcc3b361_UPM_MainLogo_Blackv1300x.png" alt="Under Par Mindset" className="h-8 w-auto" />
+            <span className="text-xs font-normal text-primary-foreground/50 uppercase tracking-widest">
+              {user?.user_type === "coach" ? "Coach" : "Parent"} View
+            </span>
           </Link>
           <div className="flex items-center gap-1">
             <Link
