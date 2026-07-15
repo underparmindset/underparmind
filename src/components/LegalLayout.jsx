@@ -23,7 +23,7 @@ export default function LegalLayout({ title, icon: Icon, lastUpdated, children }
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/cbcc3b361_UPM_MainLogo_Blackv1300x.png" alt="Under Par Mindset" className="h-7 w-auto" />
+          <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/0257c9d30_UPM_MainLogo_Whitev2300x.png" alt="Under Par Mindset" className="h-7 w-auto" />
         </div>
       </header>
       <main className="max-w-3xl mx-auto px-4 py-8 pb-24">

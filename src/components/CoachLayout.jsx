@@ -21,7 +21,7 @@ export default function CoachLayout() {
       <header className="bg-primary sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/roster" className="flex items-center gap-2.5">
-            <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/cbcc3b361_UPM_MainLogo_Blackv1300x.png" alt="Under Par Mindset" className="h-8 w-auto" />
+            <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/0257c9d30_UPM_MainLogo_Whitev2300x.png" alt="Under Par Mindset" className="h-8 w-auto" />
             <span className="text-xs font-normal text-primary-foreground/50 uppercase tracking-widest">
               {user?.user_type === "coach" ? "Coach" : "Parent"} View
             </span>

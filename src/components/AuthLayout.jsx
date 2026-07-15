@@ -7,7 +7,7 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
       <div className="w-full max-w-md">
         <div className="text-center mb-10">
           <Link to="/" className="inline-block mb-6">
-            <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/cbcc3b361_UPM_MainLogo_Blackv1300x.png" alt="Under Par Mindset" className="h-10 w-auto mx-auto" />
+            <img src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/0257c9d30_UPM_MainLogo_Whitev2300x.png" alt="Under Par Mindset" className="h-10 w-auto mx-auto" />
           </Link>
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary mb-4">
             <Icon className="w-7 h-7 text-primary-foreground" aria-hidden="true" />
