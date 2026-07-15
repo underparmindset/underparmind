@@ -24,8 +24,8 @@
     --secondary: 176 44% 63%;
     --secondary-foreground: 163 21% 26%;
     /* Muted: #BCC6C3 Mid slate */
-    --muted: 162 8% 76%;
-    --muted-foreground: 162 8% 45%;
+    --muted: 163 10% 38%;
+    --muted-foreground: 48 55% 80%;
     /* Accent: #F4D35E Royal Gold */
     --accent: 47 87% 66%;
     --accent-foreground: 163 21% 26%;
@@ -71,8 +71,8 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 176 44% 63%;
     --secondary-foreground: 163 21% 26%;
-    --muted: 162 8% 76%;
-    --muted-foreground: 162 8% 45%;
+    --muted: 163 10% 38%;
+    --muted-foreground: 48 55% 80%;
     --accent: 47 87% 66%;
     --accent-foreground: 163 21% 26%;
     --destructive: 8 60% 50%;
