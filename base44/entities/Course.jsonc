@@ -18,8 +18,12 @@
     "name"
   ],
   "rls": {
-    "create": true,
-    "read": {},
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": null,
     "update": {
       "created_by_id": "{{user.id}}"
     },
