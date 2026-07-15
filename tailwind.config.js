@@ -11,7 +11,10 @@ module.exports = {
   		},
   		colors: {
   			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+  			foreground: {
+  				DEFAULT: 'hsl(var(--foreground))',
+  				heading: 'hsl(var(--heading-foreground))'
+  			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -65,6 +68,8 @@ module.exports = {
   			heading: ['var(--font-heading)'],
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],
+  			'logo-primary': ['var(--font-logo-primary)'],
+  			'logo-secondary': ['var(--font-logo-secondary)'],
   			mono: ['var(--font-mono)']
   		},
   		keyframes: {
