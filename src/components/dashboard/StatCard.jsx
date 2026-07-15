@@ -7,16 +7,16 @@ export default function StatCard({ label, value, subtitle, icon: Icon, variant =
       variant === "accent" && "border-accent/30"
     )}>
       {Icon && (
-        <div className="absolute top-3 right-3 text-muted-foreground/30">
+        <div className="absolute top-3 right-3 text-foreground/20">
           <Icon className="w-8 h-8" />
         </div>
       )}
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground/75">{label}</span>
       <span className={cn(
         "text-2xl md:text-3xl font-display font-bold",
         variant === "accent" ? "text-accent" : "text-foreground"
       )}>{value}</span>
-      {subtitle && <span className="text-xs text-muted-foreground">{subtitle}</span>}
+      {subtitle && <span className="text-xs text-foreground/55">{subtitle}</span>}
     </div>
   );
 }

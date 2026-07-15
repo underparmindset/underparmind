@@ -21,9 +21,9 @@ export default function MPSRing({ score }) {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-display font-bold">{score}</span>
-            <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold leading-none">MPS</span>
+            <span className="text-[9px] uppercase tracking-wider text-foreground/70 font-semibold leading-none">MPS</span>
           </div>
-          <span className="text-[9px] text-muted-foreground text-center leading-tight mt-0.5">Mental<br/>Performance<br/>Score</span>
+          <span className="text-[9px] text-foreground/55 text-center leading-tight mt-0.5">Mental<br/>Performance<br/>Score</span>
         </div>
       </div>
     </div>);
