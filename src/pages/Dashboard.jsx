@@ -131,7 +131,7 @@ export default function Dashboard() {
                   onClick={() => setChartFilter(f)}
                   className={cn(
                     "px-3 py-1 rounded-full text-xs font-medium transition-colors",
-                    chartFilter === f ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                    chartFilter === f ? "bg-primary text-primary-foreground" : "bg-muted text-foreground/60 hover:bg-muted/80"
                   )}
                 >
                   {f}
@@ -149,7 +149,7 @@ export default function Dashboard() {
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-[220px] flex items-center justify-center text-muted-foreground text-sm">
+            <div className="h-[220px] flex items-center justify-center text-foreground/55 text-sm">
               Log more rounds to see your scoring trend
             </div>
           )}
@@ -170,7 +170,7 @@ export default function Dashboard() {
                 b.color === "blue" && "bg-blue-100 text-blue-700"
               )}>{b.label}</span>
             ))}
-            {badges.length === 0 && <span className="text-xs text-muted-foreground">Complete tasks to earn badges!</span>}
+            {badges.length === 0 && <span className="text-xs text-foreground/55">Complete tasks to earn badges!</span>}
           </div>
         </div>
       </div>
@@ -181,10 +181,10 @@ export default function Dashboard() {
           <h2 className="font-display font-bold text-lg">Coach's Brain</h2>
           {rounds.length < 3 ? (
             <div className="bg-card rounded-xl border border-border p-6 flex flex-col items-center gap-3 text-center">
-              <Lock className="w-8 h-8 text-muted-foreground/40" />
-              <p className="text-sm text-muted-foreground">Log 3 rounds to unlock AI insights</p>
+              <Lock className="w-8 h-8 text-foreground/25" />
+              <p className="text-sm text-foreground/55">Log 3 rounds to unlock AI insights</p>
               <div className="w-full bg-muted rounded-full h-2"><div className="bg-primary rounded-full h-2 transition-all" style={{ width: `${(rounds.length / 3) * 100}%` }} /></div>
-              <p className="text-xs text-muted-foreground">{rounds.length}/3 rounds</p>
+              <p className="text-xs text-foreground/55">{rounds.length}/3 rounds</p>
             </div>
           ) : insights.length > 0 ? (
             <div className="space-y-3">
@@ -239,14 +239,14 @@ export default function Dashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-primary/5">
-                  <th className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Date</th>
-                  <th className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Course</th>
-                  <th className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Type</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Score</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">+/-</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">GIR</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">FIR</th>
-                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-muted-foreground">Putts</th>
+                  <th className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">Date</th>
+                  <th className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">Course</th>
+                  <th className="text-left px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">Type</th>
+                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">Score</th>
+                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">+/-</th>
+                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">GIR</th>
+                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">FIR</th>
+                  <th className="text-center px-4 py-2.5 font-semibold text-xs uppercase tracking-wider text-foreground/60">Putts</th>
                 </tr>
               </thead>
               <tbody>
