@@ -10,6 +10,8 @@ import InsightCard from "@/components/dashboard/InsightCard";
 import ChecklistItem from "@/components/dashboard/ChecklistItem";
 import BounceBackCard from "@/components/dashboard/BounceBackCard";
 import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges, calculateBounceBack, calculateParAverages } from "@/lib/calculations";
+import { calculateDayStreak, calculateWeeksCompleted } from "@/lib/badgeCalculations";
+import BadgeGrid from "@/components/gym/BadgeGrid";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -42,6 +44,14 @@ export default function Dashboard() {
     queryKey: ["journals"],
     queryFn: () => base44.entities.JournalEntry.list("-entry_date", 10),
   });
+  const { data: gymModules = [] } = useQuery({
+    queryKey: ["gymModules"],
+    queryFn: () => base44.entities.GymModule.list("order", 500),
+  });
+  const { data: moduleProgress = [] } = useQuery({
+    queryKey: ["moduleProgress"],
+    queryFn: () => base44.entities.ModuleProgress.list(),
+  });
 
   const today = format(new Date(), "yyyy-MM-dd");
   const todayFocus = focusReports.find(r => r.report_date === today);
@@ -67,6 +77,8 @@ export default function Dashboard() {
   const badges = calculateBadges(rounds, focusStreak, goals);
   const bounceBack = calculateBounceBack(rounds);
   const parAverages = calculateParAverages(rounds);
+  const dayStreak = calculateDayStreak(moduleProgress);
+  const weeksCompleted = calculateWeeksCompleted(gymModules, moduleProgress);
 
   // Chart data
   const filteredRounds = chartFilter === "All" ? rounds
@@ -208,6 +220,12 @@ export default function Dashboard() {
             <ChecklistItem label="Mental Gym" done={false} linkTo="/mental-gym" />
           </div>
         </div>
+      </div>
+
+      {/* Badges */}
+      <div className="bg-card rounded-xl border border-border p-5">
+        <h2 className="font-display font-bold text-lg mb-4">Your Badges</h2>
+        <BadgeGrid streak={dayStreak} weeksCompleted={weeksCompleted} />
       </div>
 
       {/* Mental Stats Bars */}
