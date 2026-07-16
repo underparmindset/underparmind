@@ -7,6 +7,7 @@ import { PenLine, Flame, Save } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { getTodayPrompt } from "@/lib/calculations";
+import JournalSmartPrompt from "@/components/journal/JournalSmartPrompt";
 
 export default function Journal() {
   const queryClient = useQueryClient();
@@ -20,6 +21,7 @@ export default function Journal() {
 
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
 
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
@@ -64,7 +66,7 @@ export default function Journal() {
     setSaving(true);
     await base44.entities.JournalEntry.create({
       entry_date: today,
-      prompt: todayPrompt,
+      prompt: aiPrompt || todayPrompt,
       entry_text: text.trim(),
     });
     queryClient.invalidateQueries({ queryKey: ["journals"] });
@@ -82,11 +84,8 @@ export default function Journal() {
         </p>
       </div>
 
-      {/* Today's prompt */}
-      <div className="bg-accent/10 border border-accent/20 rounded-xl p-5">
-        <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-2">Today's Prompt</p>
-        <p className="text-sm font-medium text-foreground leading-relaxed">{todayPrompt}</p>
-      </div>
+      {/* AI-powered prompt */}
+      <JournalSmartPrompt entries={entries} onPrompt={setAiPrompt} />
 
       {/* Entry */}
       <div className="bg-card rounded-xl border border-border p-5 space-y-4">
