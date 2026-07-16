@@ -71,7 +71,7 @@ export default function Dashboard() {
   const puttRounds = rounds.filter(r => r.total_putts != null);
   const avgPutts = puttRounds.length ? (puttRounds.reduce((a, r) => a + r.total_putts, 0) / puttRounds.length).toFixed(1) : "—";
 
-  const mps = calculateMPS(rounds);
+  const mps = calculateMPS(rounds, moduleProgress, focusReports);
   const focusStreak = calculateFocusStreak(focusReports);
   const insights = generateInsights(rounds);
   const badges = calculateBadges(rounds, focusStreak, goals);

@@ -1,16 +1,48 @@
-// Mental Performance Score from last 5 rounds
-export function calculateMPS(rounds) {
-  if (!rounds || rounds.length === 0) return 0;
-  const recent = rounds.slice(0, 5);
-  const mentalScores = recent.map(r => {
-    const calm = r.calm_rating || 0;
-    const reset = r.reset_rating || 0;
-    const focus6 = r.focus6_rating || 0;
-    return ((calm + reset + focus6) / 30) * 100;
-  });
-  const avgMental = mentalScores.reduce((a, b) => a + b, 0) / mentalScores.length;
-  const avgRoutine = recent.reduce((a, r) => a + (r.routine_pct || 0), 0) / recent.length;
-  return Math.round(0.6 * avgMental + 0.4 * avgRoutine);
+// Mental Performance Score: blends round-based mental ratings (50%),
+// Mental Gym module completions (25%), and Win The Day streak (25%).
+// When a data source is missing, its weight redistributes to the others.
+export function calculateMPS(rounds, moduleProgress = [], focusReports = []) {
+  // --- Round-based mental score (0-100) ---
+  let roundScore = null;
+  if (rounds && rounds.length > 0) {
+    const recent = rounds.slice(0, 5);
+    const mentalScores = recent.map(r => {
+      const calm = r.calm_rating || 0;
+      const reset = r.reset_rating || 0;
+      const focus6 = r.focus6_rating || 0;
+      return ((calm + reset + focus6) / 30) * 100;
+    });
+    const avgMental = mentalScores.reduce((a, b) => a + b, 0) / mentalScores.length;
+    const avgRoutine = recent.reduce((a, r) => a + (r.routine_pct || 0), 0) / recent.length;
+    roundScore = 0.6 * avgMental + 0.4 * avgRoutine;
+  }
+
+  // --- Gym module completion score (0-100), 20 completed = full score ---
+  let gymScore = null;
+  if (moduleProgress && moduleProgress.length > 0) {
+    const completed = moduleProgress.filter(p => p.completed).length;
+    gymScore = Math.min((completed / 20) * 100, 100);
+  }
+
+  // --- Win The Day streak score (0-100), 7-day streak = full score ---
+  let wtdScore = null;
+  if (focusReports && focusReports.length > 0) {
+    const streak = calculateFocusStreak(focusReports);
+    wtdScore = Math.min((streak / 7) * 100, 100);
+  }
+
+  // Weighted average with redistribution for missing sources
+  const components = [
+    { score: roundScore, weight: 0.5 },
+    { score: gymScore, weight: 0.25 },
+    { score: wtdScore, weight: 0.25 },
+  ].filter(c => c.score !== null);
+
+  if (components.length === 0) return 0;
+
+  const totalWeight = components.reduce((a, c) => a + c.weight, 0);
+  const mps = components.reduce((a, c) => a + (c.score * c.weight / totalWeight), 0);
+  return Math.round(mps);
 }
 
 // Focus streak

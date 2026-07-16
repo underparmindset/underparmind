@@ -33,7 +33,7 @@ export default function PlayerDashboard() {
   const journals = data?.journals || [];
 
   // Stats
-  const mps = calculateMPS(rounds);
+  const mps = calculateMPS(rounds, data?.moduleProgress || [], reports);
   const focusStreak = calculateFocusStreak(reports);
   const insights = generateInsights(rounds);
   const badges = calculateBadges(rounds, focusStreak, goals);
