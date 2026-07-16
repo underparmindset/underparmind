@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,6 @@ export default function Journal() {
     queryFn: () => base44.entities.JournalEntry.list("-entry_date", 30),
   });
 
-  const todayEntry = entries.find(e => e.entry_date === today);
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -34,13 +33,9 @@ export default function Journal() {
     if (!editingText.trim()) return;
     await base44.entities.JournalEntry.update(entry.id, { entry_text: editingText.trim() });
     queryClient.invalidateQueries({ queryKey: ["journals"] });
-    toast.success("Past entry updated ✍️");
+    toast.success("Entry updated ✍️");
     setEditingId(null);
   };
-
-  useEffect(() => {
-    if (todayEntry) setText(todayEntry.entry_text || "");
-  }, [todayEntry]);
 
   // Journal streak
   const streak = (() => {
@@ -67,17 +62,14 @@ export default function Journal() {
   const saveEntry = async () => {
     if (!text.trim()) return;
     setSaving(true);
-    if (todayEntry) {
-      await base44.entities.JournalEntry.update(todayEntry.id, { entry_text: text.trim() });
-    } else {
-      await base44.entities.JournalEntry.create({
-        entry_date: today,
-        prompt: todayPrompt,
-        entry_text: text.trim(),
-      });
-    }
+    await base44.entities.JournalEntry.create({
+      entry_date: today,
+      prompt: todayPrompt,
+      entry_text: text.trim(),
+    });
     queryClient.invalidateQueries({ queryKey: ["journals"] });
     toast.success("Journal entry saved ✍️");
+    setText("");
     setSaving(false);
   };
 
@@ -106,7 +98,7 @@ export default function Journal() {
           className="text-base leading-relaxed"
         />
         <Button onClick={saveEntry} disabled={saving || !text.trim()} className="bg-primary hover:bg-primary/90">
-          <Save className="w-4 h-4 mr-1.5" />{saving ? "Saving..." : todayEntry ? "Update Entry" : "Save Entry"}
+          <Save className="w-4 h-4 mr-1.5" />{saving ? "Saving..." : "Save Entry"}
         </Button>
       </div>
 
@@ -115,7 +107,7 @@ export default function Journal() {
         <div>
           <h2 className="font-display font-bold text-lg mb-3">Recent Entries</h2>
           <div className="space-y-3">
-            {entries.filter(e => e.entry_date !== today).slice(0, 6).map((entry) => (
+            {entries.slice(0, 10).map((entry) => (
               <div key={entry.id} className="bg-card rounded-xl border border-border p-4">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-semibold text-primary">{format(new Date(entry.entry_date), "MMM d, yyyy")}</span>
