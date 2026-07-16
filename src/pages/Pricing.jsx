@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Loader2, Shield, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import Logo from "@/components/Logo";
 
 const PLANS = [
   {
@@ -84,9 +85,7 @@ export default function Pricing() {
     <div className="min-h-screen bg-primary flex flex-col items-center justify-center p-4 py-10">
       <div className="w-full max-w-5xl">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-accent mx-auto flex items-center justify-center mb-4">
-            <span className="text-white font-display font-bold text-2xl">U</span>
-          </div>
+          <Logo className="h-16 w-auto mx-auto mb-4" />
           <h1 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground">Choose Your Plan</h1>
           <p className="text-primary-foreground/70 mt-2">Train your mind like you train your swing.</p>
         </div>

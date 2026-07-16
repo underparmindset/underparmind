@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, User, Users, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/Logo";
 
 const GOALS = [
   "Improve my mental game",
@@ -78,9 +79,7 @@ export default function Setup() {
     <div className="min-h-screen bg-primary flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-accent mx-auto flex items-center justify-center mb-4">
-            <span className="text-white font-display font-bold text-2xl">U</span>
-          </div>
+          <Logo className="h-16 w-auto mx-auto mb-4" />
           <h1 className="text-3xl font-display font-bold text-primary-foreground">Welcome to UnderParMind</h1>
           <p className="text-primary-foreground/70 mt-2">Let's set up your profile</p>
         </div>

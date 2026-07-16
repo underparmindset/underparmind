@@ -13,6 +13,7 @@ import {
   Sparkles,
   MessageSquare,
 } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const TIER_LABELS = {
   monthly: "Monthly",
@@ -60,9 +61,7 @@ export default function Billing() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-            <span className="text-white font-display font-bold text-sm">U</span>
-          </div>
+          <Logo className="h-7 w-auto" />
           <span className="text-white font-display font-bold text-lg">Billing</span>
         </div>
       </header>
