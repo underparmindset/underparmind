@@ -71,15 +71,15 @@ export default function Layout() {
 
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50">
-        <div className="flex justify-around py-2">
-          {navItems.slice(0, 5).map((item) => {
+        <div className="flex justify-around overflow-x-auto py-2 px-1 no-scrollbar">
+          {navItems.map((item) => {
             const active = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] font-medium transition-colors",
+                  "flex flex-col items-center gap-0.5 px-2 py-1 text-[10px] font-medium transition-colors shrink-0",
                   active ? "text-accent" : "text-muted-foreground"
                 )}
               >
