@@ -3,6 +3,22 @@ import { base44 } from "@/api/base44Client";
 import { Input } from "@/components/ui/input";
 import { Upload, X, Loader2 } from "lucide-react";
 
+function getEmbedUrl(url) {
+  if (!url) return null;
+  // YouTube
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  // Vimeo
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+  return null;
+}
+
+function isDirectVideo(url) {
+  if (!url) return false;
+  return /\.(mp4|mov|webm|ogg|m4v)(\?|$)/i.test(url);
+}
+
 export default function VideoInput({ value, onChange }) {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef();
@@ -74,11 +90,29 @@ export default function VideoInput({ value, onChange }) {
       />
 
       {value && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/5 px-3 py-2 rounded-lg">
-          <span className="truncate flex-1">✓ Video added</span>
-          <button type="button" onClick={clear} className="text-muted-foreground hover:text-destructive shrink-0">
-            <X className="w-3 h-3" />
-          </button>
+        <div className="space-y-2">
+          {/* Video preview */}
+          {getEmbedUrl(value) ? (
+            <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
+              <iframe
+                src={getEmbedUrl(value)}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Video preview"
+              />
+            </div>
+          ) : isDirectVideo(value) ? (
+            <div className="rounded-lg overflow-hidden bg-black">
+              <video src={value} controls className="w-full max-h-64" />
+            </div>
+          ) : null}
+          <div className="flex items-center justify-between gap-2 text-xs text-primary bg-primary/5 px-3 py-2 rounded-lg">
+            <span className="truncate flex-1">✓ Video added</span>
+            <button type="button" onClick={clear} className="flex items-center gap-1 text-muted-foreground hover:text-destructive shrink-0">
+              <X className="w-3 h-3" /> Remove
+            </button>
+          </div>
         </div>
       )}
     </div>
