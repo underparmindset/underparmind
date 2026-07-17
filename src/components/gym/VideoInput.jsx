@@ -57,34 +57,30 @@ export default function VideoInput({ value, onChange }) {
         )}
       </div>
 
-      {/* Divider */}
-      <div className="flex items-center gap-2">
-        <div className="flex-1 h-px bg-border" />
-        <span className="text-xs text-muted-foreground">or upload a file</span>
-        <div className="flex-1 h-px bg-border" />
-      </div>
-
       {/* Upload dropzone */}
       <div
         onClick={() => !uploading && fileRef.current?.click()}
-        className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-lg p-6 cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-colors"
+        className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-accent/50 rounded-lg p-8 cursor-pointer hover:border-accent hover:bg-accent/5 transition-colors bg-muted/20"
       >
         {uploading ? (
           <>
-            <Loader2 className="w-6 h-6 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Uploading...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-accent" />
+            <p className="text-sm font-medium text-accent">Uploading video...</p>
           </>
         ) : (
           <>
-            <Upload className="w-6 h-6 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Click to upload an MP4 or MOV file</p>
+            <div className="w-12 h-12 rounded-full bg-accent/15 flex items-center justify-center">
+              <Upload className="w-6 h-6 text-accent" />
+            </div>
+            <p className="text-sm font-semibold text-foreground">Upload Video File</p>
+            <p className="text-xs text-muted-foreground">Click here to select an MP4, MOV, or WebM file</p>
           </>
         )}
       </div>
       <input
         ref={fileRef}
         type="file"
-        accept="video/mp4,video/mov,video/webm,video/quicktime"
+        accept="video/mp4,video/quicktime,video/webm,.mov,.mp4,.webm"
         onChange={handleFile}
         className="hidden"
       />
