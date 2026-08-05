@@ -4,6 +4,12 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
+    // Authenticate caller — only admins (incl. platform-scheduled runs) may trigger mass SMS
+    const caller = await base44.auth.me();
+    if (!caller || caller.role !== 'admin') {
+      return Response.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
     let body = {};
     try {
       body = await req.json();
