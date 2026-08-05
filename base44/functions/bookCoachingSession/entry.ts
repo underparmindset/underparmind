@@ -18,6 +18,27 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Payment not completed. Please complete your purchase first.' }, { status: 403 });
     }
 
+    // Prevent session replay: a paid checkout session may only be redeemed once.
+    // Claim it atomically by marking metadata before doing any booking work.
+    if (stripeSession.metadata?.booked === 'true') {
+      return Response.json({ error: 'This payment has already been used to book a session.' }, { status: 409 });
+    }
+    try {
+      await stripe.checkout.sessions.update(session_id, {
+        metadata: { booked: 'true', claimed_at: new Date().toISOString() }
+      });
+    } catch (claimErr) {
+      // If two replays race, Stripe rejects the second metadata write as a conflict
+      // when it carries the same read — treat as already redeemed.
+      console.error('Session claim failed (likely a concurrent replay):', claimErr);
+      return Response.json({ error: 'This payment has already been used to book a session.' }, { status: 409 });
+    }
+    const releaseSession = async () => {
+      try {
+        await stripe.checkout.sessions.update(session_id, { metadata: { booked: 'false' } });
+      } catch (e) { console.error('Session release failed:', e); }
+    };
+
     // Get Google Calendar connection
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
     const authHeader = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
@@ -49,6 +70,7 @@ Deno.serve(async (req) => {
     const freeBusyData = await freeBusyRes.json();
     const busyTimes = freeBusyData.calendars?.primary?.busy || [];
     if (busyTimes.length > 0) {
+      await releaseSession(); // let the user retry a different slot with the same payment
       return Response.json({ error: 'This time slot was just booked. Please select another time.' }, { status: 409 });
     }
 
@@ -76,6 +98,7 @@ Deno.serve(async (req) => {
     if (!createRes.ok) {
       const errData = await createRes.json();
       console.error('Calendar create error:', errData);
+      await releaseSession(); // free the session so the user can retry without paying again
       return Response.json({ error: 'Failed to create calendar event' }, { status: 500 });
     }
 
