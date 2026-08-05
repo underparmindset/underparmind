@@ -3,6 +3,7 @@ import Stripe from 'npm:stripe@17.3.1';
 
 Deno.serve(async (req) => {
   try {
+    console.log("bookCoachingSession invoked at", new Date().toISOString());
     const base44 = createClientFromRequest(req);
     const { session_id, slot_start, slot_end, name, email, tier } = await req.json();
 
