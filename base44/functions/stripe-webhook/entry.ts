@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@17.3.1';
+import { VALID_TIERS } from '../../shared/stripeConfig.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -20,15 +21,22 @@ Deno.serve(async (req) => {
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object;
       const userId = session.metadata?.user_id;
-      const tier = session.metadata?.tier;
       const customerId = session.customer;
 
       if (userId) {
-        await base44.asServiceRole.entities.User.update(userId, {
-          subscription_status: 'active',
-          subscription_tier: tier,
-          stripe_customer_id: customerId,
-        });
+        const update = { stripe_customer_id: customerId };
+        // Only subscription-mode checkouts grant a subscription entitlement, and
+        // the tier is only accepted if it's one of the server-derived subscription
+        // tiers — prevents a payment-mode (coaching) session or a spoofed metadata
+        // value from granting premium entitlements.
+        if (session.mode === 'subscription') {
+          const tier = session.metadata?.tier;
+          if (VALID_TIERS.includes(tier)) {
+            update.subscription_status = 'active';
+            update.subscription_tier = tier;
+          }
+        }
+        await base44.asServiceRole.entities.User.update(userId, update);
       }
     }
 

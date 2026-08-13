@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@17.3.1';
+import { COACHING_PRICE_ID } from '../../shared/stripeConfig.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -16,6 +17,18 @@ Deno.serve(async (req) => {
     const stripeSession = await stripe.checkout.sessions.retrieve(session_id);
     if (stripeSession.payment_status !== 'paid') {
       return Response.json({ error: 'Payment not completed. Please complete your purchase first.' }, { status: 403 });
+    }
+
+    // Verify this checkout is actually a paid one-time coaching purchase (not a
+    // subscription checkout or some other product) — otherwise a paid subscription
+    // session could be redeemed to book a free coaching slot.
+    if (stripeSession.mode !== 'payment') {
+      return Response.json({ error: 'This checkout is not valid for booking a coaching session.' }, { status: 400 });
+    }
+    const lineItems = await stripe.checkout.sessions.listLineItems(session_id);
+    const isCoaching = lineItems.data.some((li) => li.price?.id === COACHING_PRICE_ID);
+    if (!isCoaching) {
+      return Response.json({ error: 'This payment was not for a coaching session.' }, { status: 400 });
     }
 
     // Prevent session replay: a paid checkout session may only be redeemed once.

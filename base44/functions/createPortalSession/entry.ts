@@ -1,11 +1,17 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@17.3.1';
+import { ALLOWED_ORIGINS } from '../../shared/stripeConfig.ts';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-    const origin = req.headers.get('origin') || 'https://app.base44.com';
+    // Only honor a client-supplied Origin if it matches the app's known domains;
+    // otherwise fall back to the app's published domain. Prevents open redirect.
+    const requestOrigin = req.headers.get('origin');
+    const origin = (requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin))
+      ? requestOrigin
+      : ALLOWED_ORIGINS[0];
 
     let user;
     try {

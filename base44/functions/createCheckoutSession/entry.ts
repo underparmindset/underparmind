@@ -1,19 +1,33 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import Stripe from 'npm:stripe@17.3.1';
+import { ALLOWED_ORIGINS, SUBSCRIPTION_PRICES, COACHING_PRICE_ID } from '../../shared/stripeConfig.ts';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { priceId, tier, mode = 'subscription', promoCode } = await req.json();
+    const { priceId, tier: clientTier, promoCode } = await req.json();
     if (!priceId) return Response.json({ error: 'Missing priceId' }, { status: 400 });
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
+
+    // Derive the checkout mode and entitlement tier from a server-side allowlist
+    // keyed by priceId — never trust a client-supplied tier/mode, otherwise an
+    // attacker can pay the cheap monthly price and claim the annual entitlement.
+    let checkoutMode;
+    let tier;
+    if (SUBSCRIPTION_PRICES[priceId]) {
+      checkoutMode = 'subscription';
+      tier = SUBSCRIPTION_PRICES[priceId];
+    } else if (priceId === COACHING_PRICE_ID) {
+      checkoutMode = 'payment';
+      tier = clientTier || 'Coaching Session'; // display label only, not an entitlement
+    } else {
+      return Response.json({ error: 'Invalid priceId' }, { status: 400 });
+    }
+
     // Only honor a client-supplied Origin if it matches the app's known domains;
     // otherwise fall back to the app's published domain. Prevents open redirect via
     // an attacker-controlled Origin header used for Stripe success/cancel URLs.
-    const ALLOWED_ORIGINS = [
-      'https://master-mental-golf.base44.app',
-    ];
     const requestOrigin = req.headers.get('origin');
     const origin = (requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin))
       ? requestOrigin
@@ -52,14 +66,14 @@ Deno.serve(async (req) => {
     }
 
     const session = await stripe.checkout.sessions.create({
-      mode: mode,
+      mode: checkoutMode,
       line_items: [{ price: priceId, quantity: 1 }],
       ...(discounts ? { discounts } : {}),
       ...(customerEmail ? { customer_email: customerEmail } : {}),
-      success_url: mode === 'payment'
+      success_url: checkoutMode === 'payment'
         ? `${origin}/booking?checkout=success&session_id={CHECKOUT_SESSION_ID}&tier=${encodeURIComponent(tier || '')}`
         : `${origin}/?checkout=success`,
-      cancel_url: mode === 'payment' ? `${origin}/coaching?checkout=cancelled` : `${origin}/pricing?checkout=cancelled`,
+      cancel_url: checkoutMode === 'payment' ? `${origin}/coaching?checkout=cancelled` : `${origin}/pricing?checkout=cancelled`,
       metadata: {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
         ...(userId ? { user_id: userId } : {}),

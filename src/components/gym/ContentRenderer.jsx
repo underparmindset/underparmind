@@ -1,4 +1,5 @@
 import ReactMarkdown from "react-markdown";
+import DOMPurify from "dompurify";
 import { cn } from "@/lib/utils";
 
 export default function ContentRenderer({ content, className }) {
@@ -10,7 +11,7 @@ export default function ContentRenderer({ content, className }) {
     return (
       <div
         className={cn("content-rendered text-foreground text-sm", className)}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
       />
     );
   }
