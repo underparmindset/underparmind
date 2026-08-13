@@ -15,8 +15,14 @@ Deno.serve(async (req) => {
 
     if (!playerId) return Response.json({ error: 'playerId required' }, { status: 400 });
 
-    const linkedPlayerIds = user.linked_player_ids || [];
-    if (!linkedPlayerIds.includes(playerId)) {
+    // Verify access server-side: an accepted PlayerConnection where this caller
+    // is the linked coach/parent. Never trust the client-writable linked_player_ids.
+    const connections = await base44.asServiceRole.entities.PlayerConnection.filter({
+      player_id: playerId,
+      status: 'accepted',
+      coach_parent_id: user.id
+    });
+    if (connections.length === 0) {
       return Response.json({ error: 'You do not have access to this player' }, { status: 403 });
     }
 

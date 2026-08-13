@@ -8,7 +8,16 @@ Deno.serve(async (req) => {
     if (!priceId) return Response.json({ error: 'Missing priceId' }, { status: 400 });
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-    const origin = req.headers.get('origin') || 'https://app.base44.com';
+    // Only honor a client-supplied Origin if it matches the app's known domains;
+    // otherwise fall back to the app's published domain. Prevents open redirect via
+    // an attacker-controlled Origin header used for Stripe success/cancel URLs.
+    const ALLOWED_ORIGINS = [
+      'https://master-mental-golf.base44.app',
+    ];
+    const requestOrigin = req.headers.get('origin');
+    const origin = (requestOrigin && ALLOWED_ORIGINS.includes(requestOrigin))
+      ? requestOrigin
+      : ALLOWED_ORIGINS[0];
 
     // Validate promo code if provided
     let discounts;

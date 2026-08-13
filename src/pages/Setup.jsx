@@ -52,16 +52,12 @@ export default function Setup() {
         onboarded: true,
       });
 
-      // If coach/parent, auto-accept any pending connection invitations
+      // If coach/parent, auto-accept any pending connection invitations.
+      // linked_player_ids is intentionally NOT written from the client — access is
+      // verified server-side from PlayerConnection records (see getPlayerData/getRosterData).
       if (role === "coach" || role === "parent") {
         try {
-          const result = await base44.functions.invoke("acceptPendingConnections", {});
-          // Merge newly linked player IDs into the user's profile
-          if (result.data?.playerIds?.length > 0) {
-            const existing = currentUser?.linked_player_ids || [];
-            const merged = [...new Set([...existing, ...result.data.playerIds])];
-            await base44.auth.updateMe({ linked_player_ids: merged });
-          }
+          await base44.functions.invoke("acceptPendingConnections", {});
         } catch (e) {
           // Non-critical — can retry later
         }

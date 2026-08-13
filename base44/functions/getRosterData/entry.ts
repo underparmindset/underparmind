@@ -10,7 +10,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Only coaches and parents can access the roster' }, { status: 403 });
     }
 
-    const playerIds = user.linked_player_ids || [];
+    // Derive authorized player IDs server-side from accepted PlayerConnection records
+    // where this caller is the linked coach/parent. Never trust client-writable linked_player_ids.
+    const connections = await base44.asServiceRole.entities.PlayerConnection.filter({
+      status: 'accepted',
+      coach_parent_id: user.id
+    });
+    const playerIds = [...new Set(connections.map((c) => c.player_id).filter(Boolean))];
     if (playerIds.length === 0) {
       return Response.json({ players: [] });
     }
