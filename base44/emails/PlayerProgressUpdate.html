@@ -1,0 +1,36 @@
+<mjml>
+  <mj-head>
+    <mj-title>{{event_title}} — {{player_name}}</mj-title>
+    <mj-preview>{{event_line}}</mj-preview>
+    <mj-attributes>
+      <mj-all font-family="Lato, Arial, sans-serif" />
+      <mj-section background-color="#345048" padding="0 24px" />
+      <mj-text color="#000000" font-size="15px" line-height="1.6" padding="0" />
+      <mj-button background-color="#f4d35d" color="#000000" border-radius="14px" font-weight="700" inner-padding="14px 28px" align="left" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#345048">
+    <mj-wrapper padding="24px 0">
+      <mj-section background-color="#f4d35d" padding="18px 28px">
+        <mj-column>
+          <mj-image src="https://media.base44.com/images/public/6a30968a62b02031a9cb4377/b8ea7aeb6_logo.png" alt="Under Par Mindset" width="150px" align="left" padding="0 0 8px 0" />
+          <mj-text font-family="Arimo, Arial, sans-serif" font-size="18px" font-weight="700" color="#000000">Under Par Mindset</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#7b8e89" padding="32px 28px" border-radius="14px">
+        <mj-column>
+          <mj-text font-family="Arimo, Arial, sans-serif" font-size="24px" font-weight="700" color="#000000">{{event_title}}</mj-text>
+          <mj-text font-size="16px" color="#000000">{{player_name}} just made progress:</mj-text>
+          <mj-text font-size="18px" font-weight="700" color="#000000" padding-top="8px">{{event_line}}</mj-text>
+          <mj-text font-size="14px" color="#000000" padding-top="8px">{{extra_line}}</mj-text>
+          <mj-button href="{{cta_url}}" padding-top="20px">{{cta_label}}</mj-button>
+        </mj-column>
+      </mj-section>
+      <mj-section padding="16px 28px">
+        <mj-column>
+          <mj-text font-size="12px" color="#000000">You're receiving this because you're connected to {{player_name}} on Under Par Mindset. Open the app to see their full dashboard and progress history.</mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+  </mj-body>
+</mjml>

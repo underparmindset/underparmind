@@ -13,6 +13,7 @@ import MPSRing from "@/components/dashboard/MPSRing";
 import InsightCard from "@/components/dashboard/InsightCard";
 import PlayerWinTheDay from "@/components/parent-coach/PlayerWinTheDay";
 import PlayerMentalGym from "@/components/parent-coach/PlayerMentalGym";
+import RecentActivity from "@/components/parent-coach/RecentActivity";
 import { cn } from "@/lib/utils";
 
 export default function PlayerDashboard() {
@@ -24,6 +25,7 @@ export default function PlayerDashboard() {
       const res = await base44.functions.invoke("getPlayerData", { playerId });
       return res.data;
     },
+    refetchInterval: 30000,
   });
 
   const player = data?.player;
@@ -155,6 +157,9 @@ export default function PlayerDashboard() {
           </div>
         ))}
       </div>
+
+      {/* Real-time activity feed */}
+      <RecentActivity playerData={data} />
 
       <div className="grid md:grid-cols-3 gap-6">
         {/* Scoring chart */}
