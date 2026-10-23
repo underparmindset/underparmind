@@ -73,7 +73,7 @@ export default async function(req) {
       return Response.json({ ok: true, sent: 0, reason: 'recipients not found' });
     }
 
-    const results = await Promise.allSettled(recipients.map(rc =>
+    const emailResults = await Promise.allSettled(recipients.map(rc =>
       svc.integrations.Core.SendEmail({
         to: rc.email,
         template_name: 'PlayerProgressUpdate',
@@ -87,10 +87,35 @@ export default async function(req) {
         }
       })
     ));
-    const sent = results.filter(r => r.status === 'fulfilled').length;
-    results.filter(r => r.status === 'rejected').forEach(r => console.error('Email send failed:', r.reason));
+    const emailsSent = emailResults.filter(r => r.status === 'fulfilled').length;
+    emailResults.filter(r => r.status === 'rejected').forEach(r => console.error('Email send failed:', r.reason));
 
-    return Response.json({ ok: true, sent, recipients: recipients.length });
+    // SMS alerts to recipients with a phone number on file
+    const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
+    const authToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+    const fromNumber = Deno.env.get('TWILIO_PHONE_NUMBER');
+    let smsSent = 0;
+    const smsRecipients = recipients.filter(rc => rc.phone);
+    if (smsRecipients.length > 0 && accountSid && authToken && fromNumber) {
+      const auth = btoa(`${accountSid}:${authToken}`);
+      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+      const shortLine = eventLine.length > 120 ? eventLine.slice(0, 117) + '...' : eventLine;
+      const smsBody = `Under Par Mindset: ${playerName} — ${eventTitle}: ${shortLine}`;
+      const smsResults = await Promise.allSettled(smsRecipients.map(rc =>
+        fetch(twilioUrl, {
+          method: 'POST',
+          headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ From: fromNumber, To: rc.phone, Body: smsBody }).toString(),
+          signal: AbortSignal.timeout(10000)
+        }).then(res => {
+          if (!res.ok) throw new Error(`Twilio ${res.status}`);
+        })
+      ));
+      smsSent = smsResults.filter(r => r.status === 'fulfilled').length;
+      smsResults.filter(r => r.status === 'rejected').forEach(r => console.error('SMS send failed:', r.reason));
+    }
+
+    return Response.json({ ok: true, sent: emailsSent, sms_sent: smsSent, recipients: recipients.length });
   } catch (error) {
     console.error('notifyPlayerUpdate error:', error);
     return Response.json({ error: error.message }, { status: 500 });
