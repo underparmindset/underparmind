@@ -81,6 +81,19 @@ Deno.serve(async (req) => {
       },
     });
 
+    // Create the single-use redemption record up front, so the booking step can
+    // claim it with a race-free conditional update.
+    if (checkoutMode === 'payment') {
+      try {
+        await base44.asServiceRole.entities.BookingRedemption.create({
+          checkout_session_id: session.id,
+          status: 'pending',
+        });
+      } catch (redemptionErr) {
+        console.error('Failed to create booking redemption record:', redemptionErr);
+      }
+    }
+
     return Response.json({ url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);

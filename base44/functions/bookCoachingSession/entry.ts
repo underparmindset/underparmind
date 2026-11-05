@@ -32,24 +32,44 @@ Deno.serve(async (req) => {
     }
 
     // Prevent session replay: a paid checkout session may only be redeemed once.
-    // Claim it atomically by marking metadata before doing any booking work.
-    if (stripeSession.metadata?.booked === 'true') {
+    // Stripe metadata is a last-write-wins API with no precondition, so a
+    // read-then-write claim is racy. Instead the claim is an atomic conditional
+    // update on the redemption record created for this checkout: it only matches
+    // a record still in 'pending', so exactly one concurrent caller can flip it.
+    const redemptions = () => base44.asServiceRole.entities.BookingRedemption;
+    const claimToken = crypto.randomUUID();
+
+    const claimRedemption = async (sessionId: string) => {
+      let records = await redemptions().filter({ checkout_session_id: sessionId });
+      if (records.length === 0) {
+        // Checkout created before redemption records existed
+        await redemptions().create({ checkout_session_id: sessionId, status: 'pending' });
+        records = await redemptions().filter({ checkout_session_id: sessionId });
+      }
+      const target = [...records].sort(
+        (a: any, b: any) =>
+          new Date(a.created_date).getTime() - new Date(b.created_date).getTime() ||
+          String(a.id).localeCompare(String(b.id))
+      )[0];
+      const result = await redemptions().updateMany(
+        { id: target.id, status: 'pending' },
+        { $set: { status: 'claimed', claim_token: claimToken, claimed_at: new Date().toISOString() } }
+      );
+      return result?.updated === 1 ? target.id : null;
+    };
+
+    const redemptionId = await claimRedemption(session_id);
+    if (!redemptionId) {
       return Response.json({ error: 'This payment has already been used to book a session.' }, { status: 409 });
     }
-    try {
-      await stripe.checkout.sessions.update(session_id, {
-        metadata: { booked: 'true', claimed_at: new Date().toISOString() }
-      });
-    } catch (claimErr) {
-      // If two replays race, Stripe rejects the second metadata write as a conflict
-      // when it carries the same read — treat as already redeemed.
-      console.error('Session claim failed (likely a concurrent replay):', claimErr);
-      return Response.json({ error: 'This payment has already been used to book a session.' }, { status: 409 });
-    }
+
     const releaseSession = async () => {
       try {
-        await stripe.checkout.sessions.update(session_id, { metadata: { booked: 'false' } });
-      } catch (e) { console.error('Session release failed:', e); }
+        await redemptions().updateMany(
+          { id: redemptionId, status: 'claimed', claim_token: claimToken },
+          { $set: { status: 'pending', claim_token: null, claimed_at: null } }
+        );
+      } catch (e) { console.error('Redemption release failed:', e); }
     };
 
     // Get Google Calendar connection
@@ -116,6 +136,14 @@ Deno.serve(async (req) => {
     }
 
     const createdEvent = await createRes.json();
+
+    // Booking is real — close the claim out so this session can never be reused.
+    try {
+      await redemptions().updateMany(
+        { id: redemptionId, claim_token: claimToken },
+        { $set: { status: 'booked', booked_at: new Date().toISOString(), calendar_event_id: createdEvent.id, booking_email: email } }
+      );
+    } catch (e) { console.error('Failed to finalize redemption:', e); }
 
     // Get Meet link — conference data may be pending right after creation
     let meetLink = createdEvent.conferenceData?.entryPoints?.find(ep => ep.entryPointType === 'video')?.uri;
