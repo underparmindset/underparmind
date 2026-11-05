@@ -13,6 +13,28 @@ Deno.serve(async (req) => {
     if (role !== 'parent' && role !== 'coach') return Response.json({ error: 'Role must be parent or coach' }, { status: 400 });
 
     const normalizedEmail = email.toLowerCase().trim();
+    if (
+      normalizedEmail.length > 254 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(normalizedEmail) ||
+      normalizedEmail === (user.email || '').toLowerCase()
+    ) {
+      return Response.json({ error: 'Please provide a valid email address' }, { status: 400 });
+    }
+
+    // Rate limit: a player may send a limited number of invitations per day, so
+    // the app's invite mail can never be used to email arbitrary addresses at scale.
+    const INVITES_PER_DAY = 10;
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const recentInvites = await base44.asServiceRole.entities.PlayerConnection.filter({
+      player_id: user.id,
+      created_date: { $gte: since }
+    });
+    if (recentInvites.length >= INVITES_PER_DAY) {
+      return Response.json(
+        { error: 'You have reached the daily limit for invitations. Please try again tomorrow.' },
+        { status: 429 }
+      );
+    }
 
     // Check if connection already exists
     const existing = await base44.asServiceRole.entities.PlayerConnection.filter({

@@ -33,23 +33,23 @@ Deno.serve(async (req) => {
       ? requestOrigin
       : ALLOWED_ORIGINS[0];
 
-    // Validate promo code if provided
+    // Validate promo code if provided. Only customer-facing promotion codes are
+    // accepted — never a raw coupon ID — so Stripe's own activation, redemption
+    // limit and customer-eligibility rules always apply.
     let discounts;
     if (promoCode) {
+      const cleanPromoCode = String(promoCode).trim().slice(0, 100);
+      let promoCodes;
       try {
-        const promoCodes = await stripe.promotionCodes.list({ code: promoCode, active: true, limit: 1 });
-        if (promoCodes.data.length > 0) {
-          discounts = [{ promotion_code: promoCodes.data[0].id }];
-        } else {
-          // Try as a direct coupon ID
-          const coupon = await stripe.coupons.retrieve(promoCode);
-          if (coupon && coupon.valid) {
-            discounts = [{ coupon: coupon.id }];
-          }
-        }
+        promoCodes = await stripe.promotionCodes.list({ code: cleanPromoCode, active: true, limit: 1 });
       } catch (couponErr) {
+        console.error('Promo code lookup failed:', couponErr.message);
         return Response.json({ error: 'Invalid or expired promo code.' }, { status: 400 });
       }
+      if (promoCodes.data.length === 0) {
+        return Response.json({ error: 'Invalid or expired promo code.' }, { status: 400 });
+      }
+      discounts = [{ promotion_code: promoCodes.data[0].id }];
     }
 
     // Auth is optional — this is a public app, so users may not be logged in
