@@ -7,7 +7,7 @@ import { Dumbbell, TrendingUp } from "lucide-react";
 import WeekCard from "@/components/gym/WeekCard";
 import BadgeGrid from "@/components/gym/BadgeGrid";
 import BlockReportCard from "@/components/gym/BlockReportCard";
-import { calculateDayStreak, calculateWeeksCompleted, getNewlyEarnedBadges, getEarnedBlockBadges } from "@/lib/badgeCalculations";
+import { calculateDayStreak, calculateWeeksCompleted, getNewlyEarnedBadges, getEarnedBlockBadges, getEarnedHabitBadges } from "@/lib/badgeCalculations";
 import { DAY_SCHEDULE, TOTAL_WEEKS, DAYS_PER_WEEK, getPhaseForWeek } from "@/lib/gymConfig";
 
 export default function MentalGym() {
@@ -224,6 +224,7 @@ export default function MentalGym() {
           streak={dayStreak}
           weeksCompleted={weeksCompletedCount}
           blockBadges={getEarnedBlockBadges(modules, progress)}
+          habitBadges={getEarnedHabitBadges(modules, progress)}
         />
       </div>
     </div>

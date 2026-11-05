@@ -1,5 +1,5 @@
 import { parseISO, differenceInCalendarDays } from "date-fns";
-import { STREAK_BADGES, WEEKLY_BADGES, BLOCK_BADGES, GOAL_BADGES } from "./badgeConfig";
+import { STREAK_BADGES, WEEKLY_BADGES, BLOCK_BADGES, HABIT_BADGES, GOAL_BADGES } from "./badgeConfig";
 
 /**
  * Calculate the longest streak of consecutive calendar days
@@ -72,10 +72,24 @@ export function isWeekComplete(modules, progress, weekNum) {
 }
 
 /**
+ * Filters a week-keyed badge list down to the weeks that are fully complete.
+ */
+function earnedWeekBadges(badges, modules, progress) {
+  return badges.filter((b) => isWeekComplete(modules, progress, b.week));
+}
+
+/**
  * Block test badges the player has earned (all five tests of that week done).
  */
 export function getEarnedBlockBadges(modules, progress) {
-  return BLOCK_BADGES.filter((b) => isWeekComplete(modules, progress, b.week));
+  return earnedWeekBadges(BLOCK_BADGES, modules, progress);
+}
+
+/**
+ * Habit stack badges the player has earned (all five stacks of that week done).
+ */
+export function getEarnedHabitBadges(modules, progress) {
+  return earnedWeekBadges(HABIT_BADGES, modules, progress);
 }
 
 /**
@@ -91,6 +105,7 @@ export function getEarnedBadges(modules, progress) {
     streakBadges: STREAK_BADGES.filter((b) => streak >= b.threshold),
     weeklyBadges: WEEKLY_BADGES.filter((b) => weeksCompleted >= b.threshold),
     blockBadges: getEarnedBlockBadges(modules, progress),
+    habitBadges: getEarnedHabitBadges(modules, progress),
   };
 }
 
@@ -111,9 +126,11 @@ export function getNewlyEarnedBadges(modules, oldProgress, newProgress) {
     if (oldWeeks < b.threshold && newWeeks >= b.threshold) newBadges.push(b);
   });
 
-  const oldBlockIds = getEarnedBlockBadges(modules, oldProgress).map((b) => b.id);
-  getEarnedBlockBadges(modules, newProgress).forEach((b) => {
-    if (!oldBlockIds.includes(b.id)) newBadges.push(b);
+  [getEarnedBlockBadges, getEarnedHabitBadges].forEach((getEarned) => {
+    const oldIds = getEarned(modules, oldProgress).map((b) => b.id);
+    getEarned(modules, newProgress).forEach((b) => {
+      if (!oldIds.includes(b.id)) newBadges.push(b);
+    });
   });
 
   return newBadges;

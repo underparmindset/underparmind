@@ -1,6 +1,6 @@
 import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { STREAK_BADGES, WEEKLY_BADGES, BLOCK_BADGES } from "@/lib/badgeConfig";
+import { STREAK_BADGES, WEEKLY_BADGES, BLOCK_BADGES, HABIT_BADGES } from "@/lib/badgeConfig";
 
 function BadgeItem({ badge, earned }) {
   const Icon = badge.icon;
@@ -31,13 +31,34 @@ function BadgeItem({ badge, earned }) {
   );
 }
 
-export default function BadgeGrid({ streak = 0, weeksCompleted = 0, blockBadges = [] }) {
+function WeekBadgeSection({ title, caption, badges, earnedIds }) {
+  const earned = badges.filter((b) => earnedIds.includes(b.id)).length;
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-display font-bold text-sm flex items-center gap-1.5">{title}</h3>
+        <span className="text-xs text-muted-foreground">
+          {earned} of {badges.length} {caption}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        {badges.map((badge) => (
+          <BadgeItem key={badge.id} badge={badge} earned={earnedIds.includes(badge.id)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function BadgeGrid({ streak = 0, weeksCompleted = 0, blockBadges = [], habitBadges = [] }) {
   const earnedStreak = STREAK_BADGES.filter((b) => streak >= b.threshold).length;
   const earnedWeekly = WEEKLY_BADGES.filter((b) => weeksCompleted >= b.threshold).length;
   const earnedBlockIds = blockBadges.map((b) => b.id);
   const earnedBlock = BLOCK_BADGES.filter((b) => earnedBlockIds.includes(b.id)).length;
-  const totalEarned = earnedStreak + earnedWeekly + earnedBlock;
-  const totalBadges = STREAK_BADGES.length + WEEKLY_BADGES.length + BLOCK_BADGES.length;
+  const earnedHabitIds = habitBadges.map((b) => b.id);
+  const earnedHabit = HABIT_BADGES.filter((b) => earnedHabitIds.includes(b.id)).length;
+  const totalEarned = earnedStreak + earnedWeekly + earnedBlock + earnedHabit;
+  const totalBadges = STREAK_BADGES.length + WEEKLY_BADGES.length + BLOCK_BADGES.length + HABIT_BADGES.length;
 
   return (
     <div className="space-y-6">
@@ -83,25 +104,20 @@ export default function BadgeGrid({ streak = 0, weeksCompleted = 0, blockBadges 
       </div>
 
       {/* Block test badges */}
-      <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display font-bold text-sm flex items-center gap-1.5">
-            🚩 Block Test Badges
-          </h3>
-          <span className="text-xs text-muted-foreground">
-            {earnedBlock} of {BLOCK_BADGES.length} cleared
-          </span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {BLOCK_BADGES.map((badge) => (
-            <BadgeItem
-              key={badge.id}
-              badge={badge}
-              earned={earnedBlockIds.includes(badge.id)}
-            />
-          ))}
-        </div>
-      </div>
+      <WeekBadgeSection
+        title="🚩 Block Test Badges"
+        caption="cleared"
+        badges={BLOCK_BADGES}
+        earnedIds={earnedBlockIds}
+      />
+
+      {/* Habit stack badges */}
+      <WeekBadgeSection
+        title="🔗 Habit Stack Badges"
+        caption="built"
+        badges={HABIT_BADGES}
+        earnedIds={earnedHabitIds}
+      />
     </div>
   );
 }
