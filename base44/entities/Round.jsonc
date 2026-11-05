@@ -86,6 +86,51 @@
     },
     "holes_played": {
       "type": "number"
+    },
+    "best_shot": {
+      "type": "string",
+      "maxLength": 140,
+      "description": "Quick Capture: best shot of the day"
+    },
+    "turning_point_hole": {
+      "type": "number",
+      "description": "Quick Capture: hole where the round turned"
+    },
+    "turning_point_dir": {
+      "type": "string",
+      "enum": [
+        "better",
+        "worse"
+      ],
+      "enumColors": [
+        "green",
+        "red"
+      ],
+      "description": "Quick Capture: did the round turn better or worse on that hole"
+    },
+    "turning_point_note": {
+      "type": "string",
+      "description": "Quick Capture: one line on what happened when the round turned"
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Quick Capture: three facts from the round (Mental Gym Week 3 format)"
+    },
+    "lesson": {
+      "type": "string",
+      "description": "Quick Capture: one lesson from the round"
+    },
+    "no_insults": {
+      "type": "boolean",
+      "default": false,
+      "description": "Quick Capture: player confirmed the notes contain no insults, only facts"
+    },
+    "round_notes": {
+      "type": "string",
+      "description": "Anything else the player wants to remember about the round"
     }
   },
   "required": [

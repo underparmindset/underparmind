@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import ScorecardTable from "@/components/loground/ScorecardTable";
 import LiveSummary from "@/components/loground/LiveSummary";
 import GHINConnect from "@/components/loground/GHINConnect";
+import RoundNotes, { EMPTY_NOTES } from "@/components/loground/RoundNotes";
 
 const EMPTY_HOLE = () => ({ par: 4, score: null, fir: false, gir: false, putts: null });
 
@@ -31,6 +32,7 @@ export default function LogRound() {
   const [focus6, setFocus6] = useState(5);
   const [regretShot, setRegretShot] = useState("");
   const [wellDone, setWellDone] = useState("");
+  const [notes, setNotes] = useState(EMPTY_NOTES);
   const [saving, setSaving] = useState(false);
 
   const { data: courses = [] } = useQuery({
@@ -59,6 +61,7 @@ export default function LogRound() {
     setHoles(Array.from({ length: 18 }, EMPTY_HOLE));
     setCalm(5); setRoutine(50); setReset(5); setFocus6(5);
     setRegretShot(""); setWellDone("");
+    setNotes(EMPTY_NOTES);
   };
 
   const holesWithScore = holes.filter(h => h.score != null && h.score > 0);
@@ -103,6 +106,14 @@ export default function LogRound() {
       regret_shot: regretShot,
       well_done: wellDone,
       holes_played: holesWithScore.length,
+      best_shot: notes.best_shot.trim(),
+      turning_point_hole: notes.turning_point_hole ? Number(notes.turning_point_hole) : null,
+      turning_point_dir: notes.turning_point_dir || null,
+      turning_point_note: notes.turning_point_note.trim(),
+      facts: notes.facts.map(f => f.trim()).filter(Boolean),
+      lesson: notes.lesson.trim(),
+      no_insults: notes.no_insults,
+      round_notes: notes.round_notes.trim(),
     });
 
     // Save course if new
@@ -198,6 +209,9 @@ export default function LogRound() {
           </div>
         </div>
       </div>
+
+      {/* Round notes */}
+      <RoundNotes value={notes} onChange={setNotes} />
 
       <Button onClick={saveRound} disabled={saving || holesWithScore.length < 9} className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90">
         <Save className="w-5 h-5 mr-2" />{saving ? "Saving..." : "Save Round"}
