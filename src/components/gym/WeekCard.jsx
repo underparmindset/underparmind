@@ -12,6 +12,7 @@ export default function WeekCard({
   isOpen,
   onToggle,
   onToggleComplete,
+  onSaveResponses,
 }) {
   const completedCount = status.completed;
   const isComplete = status.status === "complete";
@@ -120,6 +121,8 @@ export default function WeekCard({
                 mod={mod}
                 isComplete={dayComplete}
                 onToggleComplete={onToggleComplete}
+                progressRecord={mod ? progress.find((p) => p.module_id === mod.id) : null}
+                onSaveResponses={onSaveResponses}
               />
             );
           })}

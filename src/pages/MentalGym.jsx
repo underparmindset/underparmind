@@ -120,6 +120,16 @@ export default function MentalGym() {
     }
   };
 
+  const saveResponses = async (moduleId, responses) => {
+    const existing = progress.find((p) => p.module_id === moduleId);
+    if (existing) {
+      await base44.entities.ModuleProgress.update(existing.id, { responses });
+    } else {
+      await base44.entities.ModuleProgress.create({ module_id: moduleId, responses });
+    }
+    queryClient.invalidateQueries({ queryKey: ["moduleProgress"] });
+  };
+
   const totalCompleted = progress.filter((p) => p.completed).length;
   const dayStreak = calculateDayStreak(progress);
   const weeksCompletedCount = calculateWeeksCompleted(modules, progress);
@@ -195,6 +205,7 @@ export default function MentalGym() {
               isOpen={openWeek === weekNum}
               onToggle={() => setOpenWeek(openWeek === weekNum ? null : weekNum)}
               onToggleComplete={toggleComplete}
+              onSaveResponses={saveResponses}
             />
           ))}
         </div>

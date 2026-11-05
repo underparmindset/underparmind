@@ -23,6 +23,13 @@
         "Commitment",
         "Resilience"
       ],
+      "enumColors": [
+        "blue",
+        "green",
+        "purple",
+        "yellow",
+        "red"
+      ],
       "description": "Pillar trained this day (auto-set from day_number: Mon=Focus, Tue=Confidence, Wed=Composure, Thu=Commitment, Fri=Resilience)"
     },
     "phase": {
@@ -32,6 +39,12 @@
         "Application",
         "Pressure",
         "Mastery"
+      ],
+      "enumColors": [
+        "green",
+        "blue",
+        "yellow",
+        "purple"
       ],
       "description": "Training phase (auto-set from week_number: 1-13=Foundation, 14-26=Application, 27-39=Pressure, 40-52=Mastery)"
     },
@@ -98,6 +111,51 @@
         }
       },
       "description": "Social media links (Instagram, TikTok, YouTube, X, etc.)"
+    },
+    "questions": {
+      "type": "array",
+      "description": "Interactive questions shown at the end of the module for the player to answer",
+      "items": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "The question text"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "choice",
+              "text"
+            ],
+            "enumColors": [
+              "blue",
+              "purple"
+            ],
+            "default": "choice",
+            "description": "Tap-to-answer multiple choice, or a written response"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Answer choices (for choice questions)"
+          },
+          "correct_index": {
+            "type": "number",
+            "description": "0-based index of the correct option; -1 for a reflection question with no right answer"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Feedback shown after the player answers"
+          }
+        },
+        "required": [
+          "prompt",
+          "type"
+        ]
+      }
     }
   },
   "required": [

@@ -10,6 +10,7 @@ import { Plus, Star, X, Check, Link2, Video, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import VideoInput from "@/components/gym/VideoInput";
 import RichTextEditor from "@/components/gym/RichTextEditor";
+import QuestionEditor from "@/components/gym/QuestionEditor";
 import ModuleRow from "@/components/gym/ModuleRow";
 import { DAY_SCHEDULE, TOTAL_WEEKS, getPhaseForWeek, isAssessmentWeek } from "@/lib/gymConfig";
 
@@ -32,6 +33,7 @@ const EMPTY_FORM = {
   article_url: "",
   article_title: "",
   social_links: [],
+  questions: [],
 };
 
 export default function GymEditor() {
@@ -105,6 +107,7 @@ export default function GymEditor() {
       article_url: mod.article_url || "",
       article_title: mod.article_title || "",
       social_links: mod.social_links || [],
+      questions: mod.questions || [],
     });
     setEditing(mod.id);
   };
@@ -146,6 +149,20 @@ export default function GymEditor() {
       is_assessment: isAssessmentWeek(form.week_number),
       order: form.week_number * 10 + form.day_number,
       week_label: `Week ${form.week_number}`,
+      questions: (form.questions || [])
+        .filter((q) => q.prompt && q.prompt.trim())
+        .map((q) => {
+          const explanation = q.explanation || "";
+          if (q.type !== "choice") {
+            return { prompt: q.prompt.trim(), type: "text", options: [], correct_index: -1, explanation };
+          }
+          const rawOptions = q.options || [];
+          const correctText = q.correct_index >= 0 ? (rawOptions[q.correct_index] || "").trim() : null;
+          const options = rawOptions.map((o) => (o || "").trim()).filter(Boolean);
+          const correct_index =
+            correctText && options.includes(correctText) ? options.indexOf(correctText) : -1;
+          return { prompt: q.prompt.trim(), type: "choice", options, correct_index, explanation };
+        }),
     };
     try {
       if (editing === "new") {
@@ -382,6 +399,19 @@ export default function GymEditor() {
               onChange={(val) => setForm((f) => ({ ...f, content: val }))}
               placeholder="Write the module content here..."
             />
+          </div>
+
+          {/* ── Interactive questions ── */}
+          <div className="border border-border rounded-xl overflow-hidden">
+            <div className="bg-muted/40 px-4 py-2.5 border-b border-border">
+              <p className="text-sm font-semibold text-foreground">Interactive Questions</p>
+            </div>
+            <div className="p-4">
+              <QuestionEditor
+                questions={form.questions || []}
+                onChange={(questions) => setForm((f) => ({ ...f, questions }))}
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-3">

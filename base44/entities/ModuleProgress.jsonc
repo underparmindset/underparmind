@@ -12,6 +12,32 @@
     "completed_date": {
       "type": "string",
       "format": "date"
+    },
+    "responses": {
+      "type": "array",
+      "description": "The player's saved answers to this module's interactive questions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "number",
+            "description": "Position of the question in the module"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "The question as it was asked"
+          },
+          "answer": {
+            "type": "string",
+            "description": "The answer the player chose or typed"
+          },
+          "is_correct": {
+            "type": "boolean",
+            "default": false,
+            "description": "True when the chosen option was the correct one"
+          }
+        }
+      }
     }
   },
   "required": [

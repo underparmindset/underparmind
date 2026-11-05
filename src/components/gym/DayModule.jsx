@@ -4,8 +4,16 @@ import { Check, ChevronDown, ChevronUp, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ContentRenderer from "@/components/gym/ContentRenderer";
 import ModuleMedia from "@/components/gym/ModuleMedia";
+import QuestionPlayer from "@/components/gym/QuestionPlayer";
 
-export default function DayModule({ dayInfo, mod, isComplete, onToggleComplete }) {
+export default function DayModule({
+  dayInfo,
+  mod,
+  isComplete,
+  onToggleComplete,
+  progressRecord,
+  onSaveResponses,
+}) {
   const [expanded, setExpanded] = useState(false);
   const Icon = dayInfo.icon;
 
@@ -70,6 +78,12 @@ export default function DayModule({ dayInfo, mod, isComplete, onToggleComplete }
           </p>
           <ContentRenderer content={mod.content} />
           <ModuleMedia mod={mod} />
+          <QuestionPlayer
+            moduleId={mod.id}
+            questions={mod.questions || []}
+            savedResponses={progressRecord?.responses || []}
+            onSaveResponses={onSaveResponses}
+          />
           <Button
             onClick={() => onToggleComplete(mod.id)}
             variant={isComplete ? "ghost" : "default"}
