@@ -38,6 +38,10 @@
           }
         }
       }
+    },
+    "block_focus": {
+      "type": "string",
+      "description": "Pillar the player chose to focus on next block, set from the block test week's report card"
     }
   },
   "required": [

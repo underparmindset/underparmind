@@ -1,5 +1,5 @@
 import { parseISO, differenceInCalendarDays } from "date-fns";
-import { STREAK_BADGES, WEEKLY_BADGES, GOAL_BADGES } from "./badgeConfig";
+import { STREAK_BADGES, WEEKLY_BADGES, BLOCK_BADGES, GOAL_BADGES } from "./badgeConfig";
 
 /**
  * Calculate the longest streak of consecutive calendar days
@@ -61,6 +61,24 @@ export function calculateWeeksCompleted(modules, progress) {
 }
 
 /**
+ * True when all five daily tests of a week are present and marked complete.
+ */
+export function isWeekComplete(modules, progress, weekNum) {
+  if (!modules || modules.length === 0 || !progress) return false;
+  return [1, 2, 3, 4, 5].every((day) => {
+    const mod = modules.find((m) => m.week_number === weekNum && m.day_number === day);
+    return !!mod && progress.some((p) => p.module_id === mod.id && p.completed);
+  });
+}
+
+/**
+ * Block test badges the player has earned (all five tests of that week done).
+ */
+export function getEarnedBlockBadges(modules, progress) {
+  return BLOCK_BADGES.filter((b) => isWeekComplete(modules, progress, b.week));
+}
+
+/**
  * Returns earned badge objects for both categories.
  */
 export function getEarnedBadges(modules, progress) {
@@ -72,6 +90,7 @@ export function getEarnedBadges(modules, progress) {
     weeksCompleted,
     streakBadges: STREAK_BADGES.filter((b) => streak >= b.threshold),
     weeklyBadges: WEEKLY_BADGES.filter((b) => weeksCompleted >= b.threshold),
+    blockBadges: getEarnedBlockBadges(modules, progress),
   };
 }
 
@@ -90,6 +109,11 @@ export function getNewlyEarnedBadges(modules, oldProgress, newProgress) {
   });
   WEEKLY_BADGES.forEach((b) => {
     if (oldWeeks < b.threshold && newWeeks >= b.threshold) newBadges.push(b);
+  });
+
+  const oldBlockIds = getEarnedBlockBadges(modules, oldProgress).map((b) => b.id);
+  getEarnedBlockBadges(modules, newProgress).forEach((b) => {
+    if (!oldBlockIds.includes(b.id)) newBadges.push(b);
   });
 
   return newBadges;

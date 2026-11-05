@@ -6,7 +6,8 @@ import { format } from "date-fns";
 import { Dumbbell, TrendingUp } from "lucide-react";
 import WeekCard from "@/components/gym/WeekCard";
 import BadgeGrid from "@/components/gym/BadgeGrid";
-import { calculateDayStreak, calculateWeeksCompleted, getNewlyEarnedBadges } from "@/lib/badgeCalculations";
+import BlockReportCard from "@/components/gym/BlockReportCard";
+import { calculateDayStreak, calculateWeeksCompleted, getNewlyEarnedBadges, getEarnedBlockBadges } from "@/lib/badgeCalculations";
 import { DAY_SCHEDULE, TOTAL_WEEKS, DAYS_PER_WEEK, getPhaseForWeek } from "@/lib/gymConfig";
 
 export default function MentalGym() {
@@ -211,12 +212,19 @@ export default function MentalGym() {
         </div>
       )}
 
+      {/* Block test report card */}
+      <BlockReportCard weekNum={8} label="Block 2" modules={modules} progress={progress} />
+
       {/* Badges */}
       <div className="pt-2 border-t border-border">
         <h2 className="text-xl font-display font-bold mb-4 flex items-center gap-2">
           🏅 Your Badges
         </h2>
-        <BadgeGrid streak={dayStreak} weeksCompleted={weeksCompletedCount} />
+        <BadgeGrid
+          streak={dayStreak}
+          weeksCompleted={weeksCompletedCount}
+          blockBadges={getEarnedBlockBadges(modules, progress)}
+        />
       </div>
     </div>
   );

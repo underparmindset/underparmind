@@ -10,7 +10,7 @@ import InsightCard from "@/components/dashboard/InsightCard";
 import ChecklistItem from "@/components/dashboard/ChecklistItem";
 import BounceBackCard from "@/components/dashboard/BounceBackCard";
 import { calculateMPS, calculateFocusStreak, generateInsights, calculateBadges, calculateBounceBack, calculateParAverages } from "@/lib/calculations";
-import { calculateDayStreak, calculateWeeksCompleted } from "@/lib/badgeCalculations";
+import { calculateDayStreak, calculateWeeksCompleted, getEarnedBlockBadges } from "@/lib/badgeCalculations";
 import BadgeGrid from "@/components/gym/BadgeGrid";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -225,7 +225,7 @@ export default function Dashboard() {
       {/* Badges */}
       <div className="bg-card rounded-xl border border-border p-5">
         <h2 className="font-display font-bold text-lg mb-4">Your Badges</h2>
-        <BadgeGrid streak={dayStreak} weeksCompleted={weeksCompleted} />
+        <BadgeGrid streak={dayStreak} weeksCompleted={weeksCompleted} blockBadges={getEarnedBlockBadges(gymModules, moduleProgress)} />
       </div>
 
       {/* Mental Stats Bars */}
