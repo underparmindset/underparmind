@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Target, Flag, BookOpen, Dumbbell, PenLine, MessageSquare, UserPlus, HelpCircle, Settings } from "lucide-react";
+import { LayoutDashboard, Target, Flag, History, BookOpen, Dumbbell, PenLine, MessageSquare, UserPlus, HelpCircle, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/components/Logo";
 
@@ -7,6 +7,7 @@ const navItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
   { path: "/focus", label: "Win The Day", icon: Target },
   { path: "/log-round", label: "Log Round", icon: Flag },
+  { path: "/rounds", label: "Rounds", icon: History },
   { path: "/goals", label: "Goals", icon: BookOpen },
   { path: "/mental-gym", label: "Mental Gym", icon: Dumbbell },
   { path: "/journal", label: "Journal", icon: PenLine },

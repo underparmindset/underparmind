@@ -14,6 +14,8 @@ import Setup from '@/pages/Setup';
 import DailyFocus from '@/pages/DailyFocus';
 import Goals from '@/pages/Goals';
 import LogRound from '@/pages/LogRound';
+import Rounds from '@/pages/Rounds';
+import RoundDetail from '@/pages/RoundDetail';
 import MentalGym from '@/pages/MentalGym';
 import Journal from '@/pages/Journal';
 import Coaching from '@/pages/Coaching';
@@ -84,6 +86,8 @@ const AuthenticatedApp = () => {
           <Route path="/focus" element={<DailyFocus />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/log-round" element={<LogRound />} />
+          <Route path="/rounds" element={<Rounds />} />
+          <Route path="/round/:roundId" element={<RoundDetail />} />
           <Route path="/mental-gym" element={<MentalGym />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/coaching" element={<Coaching />} />
