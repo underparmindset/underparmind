@@ -104,25 +104,11 @@ export default function Support() {
     if (!subject.trim() || !message.trim()) return;
     setSubmitting(true);
     try {
-      await base44.entities.SupportTicket.create({
+      await base44.functions.invoke("submitSupportTicket", {
         subject: subject.trim(),
         message: message.trim(),
         category,
-        user_email: user?.email || "",
-        user_name: user?.first_name || "",
       });
-
-      if (user?.email) {
-        try {
-          await base44.integrations.Core.SendEmail({
-            to: user.email,
-            subject: `Support Request Received: ${subject}`,
-            body: `Hi ${user.first_name || "there"},\n\nWe've received your support request and our team will get back to you soon.\n\nSubject: ${subject}\nCategory: ${CATEGORIES.find((c) => c.value === category)?.label}\n\nMessage:\n${message}\n\nThanks for reaching out!\nThe Under Par Mindset Team`,
-          });
-        } catch (e) {
-          // Non-critical — ticket is still saved in the database
-        }
-      }
 
       setSubmitted(true);
       setSubject("");

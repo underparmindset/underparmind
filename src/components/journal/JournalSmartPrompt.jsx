@@ -11,57 +11,8 @@ export default function JournalSmartPrompt({ entries, onPrompt }) {
   const generatePrompt = async () => {
     setLoading(true);
     try {
-      const [progress, modules] = await Promise.all([
-        base44.entities.ModuleProgress.list("-completed_date", 50),
-        base44.entities.GymModule.list("order", 100),
-      ]);
-
-      const completedModules = progress
-        .filter(p => p.completed)
-        .map(p => modules.find(m => m.id === p.module_id))
-        .filter(Boolean)
-        .slice(-5)
-        .map(m => `${m.title} — ${m.category}, Week ${m.week_number}`);
-
-      const recentEntries = entries
-        .slice(0, 5)
-        .map(e => ({
-          date: e.entry_date,
-          prompt: e.prompt,
-          text: (e.entry_text || "").slice(0, 300),
-        }));
-
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a mental performance coach for junior golfers using the "Under Par Mindset" program. Generate ONE personalized journaling prompt for today.
-
-Context about this golfer:
-
-Recent journal entries (most recent first):
-${recentEntries.length ? JSON.stringify(recentEntries, null, 2) : "No previous entries yet."}
-
-Mental gym modules completed (most recent):
-${completedModules.length ? JSON.stringify(completedModules, null, 2) : "No modules completed yet."}
-
-The 5 mental pillars trained in the program are: Focus, Confidence, Composure, Commitment, and Resilience.
-
-Guidelines:
-- Write a single journaling prompt (1-2 sentences max)
-- Make it specific and personal based on their history
-- If they've been working on a particular pillar, connect to it
-- Help them reflect on their mental game, recent rounds, or training
-- Don't mention "entries" or "modules" — just ask a thoughtful question
-- Keep it encouraging and age-appropriate for a junior golfer
-
-Return only the prompt text.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            prompt: { type: "string" },
-          },
-        },
-      });
-
-      const finalPrompt = response.prompt || fallbackPrompt;
+      const { data } = await base44.functions.invoke("generateJournalPrompt", {});
+      const finalPrompt = data?.prompt || fallbackPrompt;
       setPrompt(finalPrompt);
       onPrompt?.(finalPrompt);
     } catch {

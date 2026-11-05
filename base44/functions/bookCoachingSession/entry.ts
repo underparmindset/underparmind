@@ -31,6 +31,38 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'This payment was not for a coaching session.' }, { status: 400 });
     }
 
+    // Server-side booking rules. The client picks a slot from
+    // getCalendarAvailability (9am–6pm coach time, 60-minute sessions, starting
+    // at least 24h out); nothing but a matching slot may reach the calendar.
+    const SESSION_MINUTES = 60;
+    const LEAD_TIME_MS = 24 * 60 * 60 * 1000;
+    const BOOKING_HORIZON_MS = 15 * 24 * 60 * 60 * 1000;
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    const slotStartMs = Date.parse(slot_start);
+    const slotEndMs = Date.parse(slot_end);
+    if (Number.isNaN(slotStartMs) || Number.isNaN(slotEndMs)) {
+      return Response.json({ error: 'Invalid session time.' }, { status: 400 });
+    }
+    if (slotEndMs - slotStartMs !== SESSION_MINUTES * 60000) {
+      return Response.json({ error: 'Coaching sessions are 60 minutes long.' }, { status: 400 });
+    }
+    if (slotStartMs < Date.now() + LEAD_TIME_MS) {
+      return Response.json({ error: 'Sessions must be booked at least 24 hours in advance.' }, { status: 400 });
+    }
+    if (slotStartMs > Date.now() + BOOKING_HORIZON_MS) {
+      return Response.json({ error: 'Sessions can only be booked within the next 14 days.' }, { status: 400 });
+    }
+    const cleanEmail = String(email || '').trim();
+    if (cleanEmail.length > 254 || !EMAIL_RE.test(cleanEmail)) {
+      return Response.json({ error: 'Please provide a valid email address.' }, { status: 400 });
+    }
+    const cleanName = String(name || '').trim().slice(0, 100);
+    if (!cleanName) {
+      return Response.json({ error: 'Please provide your name.' }, { status: 400 });
+    }
+    const cleanTier = String(tier || 'Coaching Session').trim().slice(0, 60) || 'Coaching Session';
+
     // Prevent session replay: a paid checkout session may only be redeemed once.
     // Stripe metadata is a last-write-wins API with no precondition, so a
     // read-then-write claim is racy. Instead the claim is an atomic conditional
@@ -88,9 +120,21 @@ Deno.serve(async (req) => {
       console.error('Timezone fetch error:', e);
     }
 
+    // The slot must land on a real bookable boundary: on the hour, between 9am
+    // and 6pm in the coach's timezone — exactly what availability offers.
+    const slotTimeParts = new Intl.DateTimeFormat('en-US', {
+      timeZone: coachTimezone, hour: '2-digit', minute: '2-digit', hour12: false
+    }).formatToParts(new Date(slotStartMs));
+    const slotHour = parseInt(slotTimeParts.find((p) => p.type === 'hour')?.value || '-1', 10) % 24;
+    const slotMinute = parseInt(slotTimeParts.find((p) => p.type === 'minute')?.value || '-1', 10);
+    if (slotMinute !== 0 || slotHour < 9 || slotHour >= 18) {
+      await releaseSession();
+      return Response.json({ error: 'That time is not a bookable coaching slot.' }, { status: 400 });
+    }
+
     // Re-check availability to prevent double booking
-    const slotStart = new Date(slot_start);
-    const slotEnd = new Date(slot_end);
+    const slotStart = new Date(slotStartMs);
+    const slotEnd = new Date(slotEndMs);
     const freeBusyRes = await fetch('https://www.googleapis.com/calendar/v3/freeBusy', {
       method: 'POST',
       headers: authHeader,
@@ -109,11 +153,11 @@ Deno.serve(async (req) => {
 
     // Create calendar event with Google Meet conference data
     const event = {
-      summary: `Coaching Session: ${tier}`,
-      description: `Coaching session with ${name} (${email})\n\nBooked via Under Par Mindset`,
+      summary: `Coaching Session: ${cleanTier}`,
+      description: `Coaching session with ${cleanName} (${cleanEmail})\n\nBooked via Under Par Mindset`,
       start: { dateTime: slotStart.toISOString(), timeZone: coachTimezone },
       end: { dateTime: slotEnd.toISOString(), timeZone: coachTimezone },
-      attendees: [{ email }],
+      attendees: [{ email: cleanEmail }],
       conferenceData: {
         createRequest: {
           requestId: `coaching-${session_id}-${Date.now()}`,
@@ -141,7 +185,7 @@ Deno.serve(async (req) => {
     try {
       await redemptions().updateMany(
         { id: redemptionId, claim_token: claimToken },
-        { $set: { status: 'booked', booked_at: new Date().toISOString(), calendar_event_id: createdEvent.id, booking_email: email } }
+        { $set: { status: 'booked', booked_at: new Date().toISOString(), calendar_event_id: createdEvent.id, booking_email: cleanEmail } }
       );
     } catch (e) { console.error('Failed to finalize redemption:', e); }
 

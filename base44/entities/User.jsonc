@@ -41,7 +41,14 @@
     },
     "stripe_customer_id": {
       "type": "string",
-      "description": "Stripe customer ID for billing portal access"
+      "description": "Stripe customer ID for billing portal access",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "subscription_status": {
       "type": "string",
@@ -52,11 +59,25 @@
         "trialing",
         "none"
       ],
-      "default": "none"
+      "default": "none",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     },
     "subscription_tier": {
       "type": "string",
-      "description": "Current subscription plan tier (monthly, quarterly, annual)"
+      "description": "Current subscription plan tier (monthly, quarterly, annual)",
+      "rls": {
+        "update": {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      }
     }
   }
 }
