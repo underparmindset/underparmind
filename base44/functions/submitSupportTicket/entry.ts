@@ -18,11 +18,28 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Subject and message are required.' }, { status: 400 });
     }
 
+    // The support page is behind login, and tickets are only accepted from a
+    // signed-in user — otherwise anyone could create unlimited tickets.
     let user = null;
     try {
       user = await base44.auth.me();
     } catch (e) {
-      // Public app — a ticket without an account is still valid
+      user = null;
+    }
+    if (!user) return Response.json({ error: 'Please sign in to contact support.' }, { status: 401 });
+
+    // Cap tickets per person so the form can't be used to flood the inbox.
+    const TICKETS_PER_DAY = 10;
+    const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const recent = await base44.entities.SupportTicket.filter({
+      created_by_id: user.id,
+      created_date: { $gte: since },
+    });
+    if (recent.length >= TICKETS_PER_DAY) {
+      return Response.json(
+        { error: 'You have reached the daily limit for support requests. Please try again tomorrow.' },
+        { status: 429 }
+      );
     }
 
     const ticket = await base44.entities.SupportTicket.create({

@@ -3,6 +3,17 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Availability is only shown to signed-in users on the booking page, never to
+    // anonymous callers curious about the coach's calendar.
+    let user = null;
+    try {
+      user = await base44.auth.me();
+    } catch (e) {
+      user = null;
+    }
+    if (!user) return Response.json({ error: 'Please sign in to view available times.' }, { status: 401 });
+
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
     const authHeader = { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' };
 

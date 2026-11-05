@@ -6,6 +6,15 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
+    // This spends paid AI credits, so it may only run for a signed-in player.
+    let user = null;
+    try {
+      user = await base44.auth.me();
+    } catch (e) {
+      user = null;
+    }
+    if (!user) return Response.json({ error: 'Unauthorized', prompt: null }, { status: 401 });
+
     let progress = [];
     let modules = [];
     let entries = [];

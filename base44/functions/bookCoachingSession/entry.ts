@@ -6,6 +6,17 @@ Deno.serve(async (req) => {
   try {
     console.log("bookCoachingSession invoked at", new Date().toISOString());
     const base44 = createClientFromRequest(req);
+
+    // Booking is done from the signed-in booking page; an anonymous caller must not
+    // be able to redeem a paid session or put events on the coach's calendar.
+    let caller = null;
+    try {
+      caller = await base44.auth.me();
+    } catch (e) {
+      caller = null;
+    }
+    if (!caller) return Response.json({ error: 'Please sign in to book a coaching session.' }, { status: 401 });
+
     const { session_id, slot_start, slot_end, name, email, tier } = await req.json();
 
     if (!session_id || !slot_start || !slot_end || !name || !email) {
