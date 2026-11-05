@@ -22,7 +22,12 @@ Deno.serve(async (req) => {
       status: 'accepted',
       coach_parent_id: user.id
     });
-    if (connections.length === 0) {
+    // Provenance: a caller may never be linked to a player through a connection
+    // record they created themselves — links only count when they came from the
+    // player's own invite flow. Blocks self-issued "accepted" rows (client write
+    // rules also restrict create to the user's own player_id).
+    const authorized = connections.some((c) => c.created_by_id !== user.id);
+    if (!authorized) {
       return Response.json({ error: 'You do not have access to this player' }, { status: 403 });
     }
 

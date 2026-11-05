@@ -16,7 +16,16 @@ Deno.serve(async (req) => {
       status: 'accepted',
       coach_parent_id: user.id
     });
-    const playerIds = [...new Set(connections.map((c) => c.player_id).filter(Boolean))];
+    // Only count links that did not originate from this caller: a connection
+    // record the coach/parent created themselves is not an invitation.
+    const playerIds = [
+      ...new Set(
+        connections
+          .filter((c) => c.created_by_id !== user.id)
+          .map((c) => c.player_id)
+          .filter(Boolean)
+      )
+    ];
     if (playerIds.length === 0) {
       return Response.json({ players: [] });
     }

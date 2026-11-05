@@ -41,7 +41,9 @@
     "role"
   ],
   "rls": {
-    "create": true,
+    "create": {
+      "data.player_id": "{{user.id}}"
+    },
     "read": {
       "$or": [
         {

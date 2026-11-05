@@ -17,15 +17,22 @@ Deno.serve(async (req) => {
     }
 
     const playerIds = [];
+    let linked = 0;
     for (const conn of pending) {
+      // Only the player's own invitation may be accepted. A row this caller
+      // created themselves (self-issued link to an arbitrary player) is not an
+      // invitation and must never become an accepted connection.
+      if (!conn.player_id || conn.created_by_id === user.id) continue;
+
       await base44.asServiceRole.entities.PlayerConnection.update(conn.id, {
         status: 'accepted',
         coach_parent_id: user.id
       });
-      if (conn.player_id) playerIds.push(conn.player_id);
+      playerIds.push(conn.player_id);
+      linked++;
     }
 
-    return Response.json({ linked: pending.length, playerIds });
+    return Response.json({ linked, playerIds });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
